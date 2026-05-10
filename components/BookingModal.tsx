@@ -10,34 +10,56 @@ interface BookingModalProps {
 
 type Step = 1 | 2 | 3 | 4;
 
-declare global {
-  interface Window {
-    Razorpay: new (options: RazorpayOptions) => RazorpayInstance;
-  }
-}
+const handleRazorpay = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: total,
+          roomName: room.name,
+          checkIn,
+          checkOut,
+          guests,
+        }),
+      });
+      const data = await res.json();
 
-interface RazorpayOptions {
-  key: string;
-  amount: number;
-  currency: string;
-  name: string;
-  description: string;
-  order_id: string;
-  prefill: { name: string; email: string; contact: string };
-  theme: { color: string };
-  handler: (response: RazorpayResponse) => void;
-  modal: { ondismiss: () => void };
-}
+      if (data.error) {
+        // Pay later fallback if Razorpay not configured
+        handlePayLater();
+        return;
+      }
 
-interface RazorpayInstance {
-  open: () => void;
-}
+      const options: RazorpayOptions = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "",
+        amount: data.amount,
+        currency: data.currency,
+        name: "Royal Cliff Resort",
+        description: `${room.name} — ${nights} night${nights > 1 ? "s" : ""}`,
+        order_id: data.orderId,
+        prefill: { name: guestName, email: guestEmail, contact: guestPhone },
+        theme: { color: "#b8963e" },
+        handler: (response: RazorpayResponse) => {
+          setBookingRef(response.razorpay_payment_id);
+          setStep(4);
+        },
+        modal: { ondismiss: () => setLoading(false) },
+      };
 
-interface RazorpayResponse {
-  razorpay_payment_id: string;
-  razorpay_order_id: string;
-  razorpay_signature: string;
-}
+      if (typeof window !== "undefined" && window.Razorpay) {
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      } else {
+        handlePayLater();
+      }
+    } catch {
+      handlePayLater();
+    } finally {
+      setLoading(false);
+    }
+  };
 
 export default function BookingModal({ room, onClose }: BookingModalProps) {
   const [step, setStep] = useState<Step>(1);
