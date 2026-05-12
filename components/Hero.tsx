@@ -123,39 +123,15 @@ export default function Hero() {
         >
           <Link
             href="/rooms"
-            style={{
-              fontFamily: "var(--font-ui)",
-              fontSize: "0.7rem",
-              fontWeight: 600,
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              padding: "1rem 2.4rem",
-              background: "var(--gold)",
-              color: "#fff",
-              borderRadius: "3px",
-              transition: "all 0.3s",
-            }}
+            className="btn-gold-solid"
           >
             Explore Rooms
           </Link>
 
           <button
+            className="btn-gold"
             onClick={() => {
               document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-            }}
-            style={{
-              fontFamily: "var(--font-ui)",
-              fontSize: "0.7rem",
-              fontWeight: 600,
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              padding: "1rem 2.4rem",
-              background: "transparent",
-              color: "#fff",
-              border: "1.5px solid rgba(255,255,255,0.5)",
-              borderRadius: "3px",
-              transition: "all 0.3s",
-              cursor: "pointer",
             }}
           >
             Enquire Now

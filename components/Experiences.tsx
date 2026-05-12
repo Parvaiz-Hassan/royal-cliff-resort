@@ -86,6 +86,7 @@ export default function Experiences() {
 
         {/* Cards */}
         <div
+          className="experiences-grid-container"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",

@@ -196,48 +196,17 @@ export default function RoomCard({ room, onBook }: RoomCardProps) {
           </div>
 
           <div style={{ display: "flex", gap: "0.5rem" }}>
-            <Link
+           <Link
               href={`/rooms/${room.id}`}
-              style={{
-                fontFamily: "var(--font-ui)",
-                fontSize: "0.62rem",
-                fontWeight: 600,
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
-                padding: "0.65rem 1rem",
-                background: "transparent",
-                color: "var(--gold)",
-                border: "1.5px solid var(--gold)",
-                borderRadius: "3px",
-                transition: "all 0.3s",
-              }}
+              className="btn-gold"
+              style={{ fontSize: "0.62rem", padding: "0.55rem 1rem" }}
             >
               Details
             </Link>
             <button
               onClick={() => onBook(room)}
-              style={{
-                fontFamily: "var(--font-ui)",
-                fontSize: "0.62rem",
-                fontWeight: 600,
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
-                padding: "0.65rem 1.2rem",
-                background: "var(--gold)",
-                color: "#fff",
-                border: "none",
-                borderRadius: "3px",
-                cursor: "pointer",
-                transition: "all 0.3s",
-              }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.background = "var(--brown)";
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.background = "var(--gold)";
-              }}
+              className="btn-gold-solid"
+              style={{ fontSize: "0.62rem", padding: "0.55rem 1.2rem", borderRadius: "2px" }}
             >
               Book Now
             </button>

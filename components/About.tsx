@@ -9,16 +9,14 @@ export default function About() {
       }}
     >
       <div
-        style={{
-          maxWidth: "1240px",
-          margin: "0 auto",
-          padding: "0 2rem",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "6rem",
-          alignItems: "center",
-        }}
-      >
+          className="about-grid"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "6rem",
+            alignItems: "center",
+          }}
+        >
         {/* Left — Visual */}
         <div style={{ position: "relative" }}>
           {/* Main image placeholder */}
@@ -86,7 +84,8 @@ export default function About() {
           </div>
 
           {/* Floating card */}
-          <div
+           <div
+            className="floating-card"
             style={{
               position: "absolute",
               bottom: "-2rem",
@@ -243,23 +242,7 @@ export default function About() {
             ))}
           </div>
 
-          <Link
-            href="/rooms"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              fontFamily: "var(--font-ui)",
-              fontSize: "0.7rem",
-              fontWeight: 600,
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              padding: "1rem 2.4rem",
-              background: "var(--gold)",
-              color: "#fff",
-              borderRadius: "3px",
-              transition: "all 0.3s",
-            }}
-          >
+          <Link href="/rooms" className="btn-gold-solid">
             Discover Our Rooms
           </Link>
         </div>

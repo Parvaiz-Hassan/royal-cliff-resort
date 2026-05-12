@@ -94,34 +94,11 @@ export default function CTABand({ onBook }: CTABandProps) {
             flexWrap: "wrap",
           }}
         >
-          <button
-            onClick={onBook}
-            style={{
-              fontFamily: "var(--font-ui)",
-              fontSize: "0.7rem",
-              fontWeight: 600,
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              padding: "1rem 2.4rem",
-              background: "var(--gold)",
-              color: "#fff",
-              border: "none",
-              borderRadius: "3px",
-              cursor: "pointer",
-              transition: "all 0.3s",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.background = "var(--brown)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.background = "var(--gold)";
-            }}
-          >
+          <button onClick={onBook} className="btn-gold-solid">
             Book Your Stay
           </button>
 
-          
-            <a href="tel:+919622299302" style={{ fontFamily: "var(--font-ui)", fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.22em", textTransform: "uppercase", padding: "1rem 2.4rem", background: "#fff", color: "var(--dark)", border: "none", borderRadius: "3px", transition: "all 0.3s" }}>
+          <a href="tel:+919622299302" className="btn-gold">
             Call Us Now
           </a>
         </div>

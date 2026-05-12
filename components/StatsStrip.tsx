@@ -15,6 +15,7 @@ export default function StatsStrip() {
       }}
     >
       <div
+      className="stats-grid"
         style={{
           maxWidth: "1240px",
           margin: "0 auto",

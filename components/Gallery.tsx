@@ -62,6 +62,7 @@ export default function Gallery() {
 
         {/* Mosaic Grid */}
         <div
+          className="gallery-grid-container"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(12, 1fr)",

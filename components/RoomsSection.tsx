@@ -121,21 +121,7 @@ export default function RoomsSection({ onBook }: RoomsSectionProps) {
               ))}
             </div>
 
-            <Link
-              href="/rooms"
-              style={{
-                fontFamily: "var(--font-ui)",
-                fontSize: "0.65rem",
-                fontWeight: 600,
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
-                padding: "0.65rem 1.4rem",
-                background: "transparent",
-                color: "var(--gold)",
-                border: "1.5px solid var(--gold)",
-                borderRadius: "3px",
-              }}
-            >
+            <Link href="/rooms" className="btn-gold">
               View All
             </Link>
           </div>
@@ -144,12 +130,13 @@ export default function RoomsSection({ onBook }: RoomsSectionProps) {
         {/* Grid View */}
         {view === "grid" && (
           <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "2rem",
-            }}
-          >
+              className="rooms-grid-container"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: "2rem",
+              }}
+            >
             {visibleRooms.map((room) => (
               <RoomCard key={room.id} room={room} onBook={onBook} />
             ))}

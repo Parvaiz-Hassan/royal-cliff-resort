@@ -24,8 +24,8 @@ export default function Navbar() {
           display: "flex",
           alignItems: "center",
           transition: "background 0.4s, box-shadow 0.4s",
-          background: scrolled ? "rgba(250,247,242,0.97)" : "transparent",
-          boxShadow: scrolled ? "0 1px 30px rgba(26,22,18,0.08)" : "none",
+          background: scrolled ? "rgba(10,12,15,0.97)" : "transparent",
+          boxShadow: scrolled ? "0 1px 0 rgba(201,169,110,0.15)" : "none",
           backdropFilter: scrolled ? "blur(12px)" : "none",
         }}
       >
@@ -47,7 +47,7 @@ export default function Navbar() {
                 fontFamily: "var(--font-display)",
                 fontSize: "1.25rem",
                 fontWeight: 500,
-                color: scrolled ? "var(--dark)" : "#fff",
+                color: "#fff",
                 letterSpacing: "0.03em",
                 lineHeight: 1.1,
                 transition: "color 0.4s",
@@ -97,7 +97,7 @@ export default function Navbar() {
                     fontWeight: 500,
                     letterSpacing: "0.14em",
                     textTransform: "uppercase",
-                    color: scrolled ? "var(--dark)" : "rgba(255,255,255,0.85)",
+                    color: scrolled ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.85)",
                     transition: "color 0.3s",
                   }}
                   onMouseEnter={(e) =>
@@ -205,10 +205,11 @@ export default function Navbar() {
           </button>
           {[
             { label: "Home", href: "/" },
+            { label: "About", href: "/about" },
             { label: "Rooms", href: "/rooms" },
-            { label: "Experiences", href: "/#experiences" },
-            { label: "Gallery", href: "/#gallery" },
-            { label: "Contact", href: "/#contact" },
+            { label: "Experiences", href: "/experiences" },
+            { label: "Gallery", href: "/gallery" },
+            { label: "Contact", href: "/contact" },
           ].map((item) => (
             <Link
               key={item.href}

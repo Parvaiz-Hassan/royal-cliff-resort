@@ -91,6 +91,7 @@ export default function Testimonials() {
 
         {/* Slide */}
         <div
+          className="testimonial-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
@@ -249,6 +250,7 @@ export default function Testimonials() {
 
           {/* Image */}
           <div
+          className="testimonial-image"
             style={{
               aspectRatio: "4/5",
               borderRadius: "6px",

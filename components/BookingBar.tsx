@@ -28,6 +28,7 @@ export default function BookingBar() {
       }}
     >
       <div
+      className="booking-bar-inner"
         style={{
           display: "flex",
           alignItems: "stretch",

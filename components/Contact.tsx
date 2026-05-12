@@ -69,13 +69,14 @@ export default function Contact() {
         style={{ maxWidth: "1240px", margin: "0 auto", padding: "0 2rem" }}
       >
         <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1.4fr",
-            gap: "5rem",
-            alignItems: "start",
-          }}
-        >
+            className="contact-grid-container"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1.4fr",
+              gap: "5rem",
+              alignItems: "start",
+            }}
+          >
           {/* Left — Info */}
           <div>
             <span
@@ -416,21 +417,12 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={status === "sending"}
+                  className="btn-gold-solid"
                   style={{
                     width: "100%",
-                    fontFamily: "var(--font-ui)",
-                    fontSize: "0.7rem",
-                    fontWeight: 600,
-                    letterSpacing: "0.22em",
-                    textTransform: "uppercase",
-                    padding: "1rem",
-                    background:
-                      status === "sending" ? "var(--text-muted)" : "var(--gold)",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "3px",
+                    justifyContent: "center",
+                    opacity: status === "sending" ? 0.7 : 1,
                     cursor: status === "sending" ? "not-allowed" : "pointer",
-                    transition: "all 0.3s",
                   }}
                 >
                   {status === "sending" ? "Sending..." : "Send Enquiry →"}

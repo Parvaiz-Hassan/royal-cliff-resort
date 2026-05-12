@@ -1,32 +1,34 @@
 @import "tailwindcss";
 
 @theme {
-  --color-gold:       #b8963e;
-  --color-gold-light: #d4af6a;
-  --color-gold-pale:  #f0e4c4;
-  --color-cream:      #faf7f2;
-  --color-dark:       #1a1612;
-  --color-charcoal:   #2c2620;
-  --color-brown:      #4a3728;
-  --color-text-main:  #3d302a;
-  --color-text-muted: #7a6a60;
+  --color-gold:        #c9a96e;
+  --color-gold-light:  #e8d5a3;
+  --color-gold-pale:   #f5ead0;
+  --color-cream:       #f8f4ee;
+  --color-dark:        #0a0c0f;
+  --color-charcoal:    #111418;
+  --color-brown:       #6b4f2a;
+  --color-text-main:   #2c2420;
+  --color-text-muted:  #8a7a6a;
 }
 
 :root {
-  --gold:       #b8963e;
-  --gold-light: #d4af6a;
-  --gold-pale:  #f0e4c4;
-  --cream:      #faf7f2;
-  --dark:       #1a1612;
-  --charcoal:   #2c2620;
-  --brown:      #4a3728;
-  --text:       #3d302a;
-  --text-muted: #7a6a60;
-  --border:     rgba(184,150,62,0.2);
-  --nav-h:      80px;
+  --gold:        #c9a96e;
+  --gold-light:  #e8d5a3;
+  --gold-pale:   #f5ead0;
+  --cream:       #f8f4ee;
+  --warm-white:  #fff9f0;
+  --dark:        #0a0c0f;
+  --charcoal:    #111418;
+  --brown:       #6b4f2a;
+  --text:        #2c2420;
+  --text-muted:  #8a7a6a;
+  --border:      rgba(201,169,110,0.2);
+  --nav-h:       80px;
   --font-display: "Playfair Display", Georgia, serif;
   --font-body:    "Cormorant Garamond", Georgia, serif;
   --font-ui:      "Jost", sans-serif;
+  --font-label:   "Cinzel", serif;
 }
 
 *, *::before, *::after {
@@ -46,3 +48,295 @@ body {
 
 a { text-decoration: none; color: inherit; }
 ul { list-style: none; }
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE RESPONSIVE FIXES
+   ═══════════════════════════════════════════════════════ */
+
+/* Prevent horizontal scroll */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Fix booking bar overflow */
+@media (max-width: 768px) {
+  /* Navbar */
+  .nav-desktop { display: none !important; }
+  .nav-book-btn { display: none !important; }
+
+  /* Booking bar */
+  .booking-bar-inner {
+    flex-direction: column !important;
+  }
+
+  /* Stats strip */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* About section */
+  .about-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+
+  /* Floating card fix */
+  .floating-card {
+    position: relative !important;
+    bottom: auto !important;
+    right: auto !important;
+    margin-top: 1rem !important;
+  }
+
+  /* Rooms grid */
+ /* Rooms grid */
+  .rooms-grid-container {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .rooms-grid-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .rooms-grid-container {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Features grid */
+  .features-grid-container {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Experiences grid */
+  .experiences-grid-container {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Gallery grid */
+  .gallery-grid-container {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: auto !important;
+  }
+  .gallery-grid-container > div {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    aspect-ratio: 1 !important;
+  }
+
+  /* Testimonials */
+  .testimonial-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .testimonial-image {
+    display: none !important;
+  }
+
+  /* Contact grid */
+  .contact-grid-container {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+
+  /* Footer grid */
+  .footer-grid-container {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+
+  /* Room detail */
+  .room-detail-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Booking modal */
+  .booking-modal-inner {
+    padding: 1.2rem !important;
+  }
+
+  /* Hero buttons */
+  .hero-actions {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  /* Section padding */
+  .section-padding {
+    padding: 60px 0 !important;
+  }
+
+  /* Hide scroll hint on mobile */
+  .scroll-hint {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .form-row-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .modal-steps-grid {
+    font-size: 0.55rem !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   COMING SOON STYLE POLISH
+   ═══════════════════════════════════════════════════════ */
+
+/* Cinzel labels */
+@layer base {
+  .btn-gold {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: fit-content;
+    font-family: "Jost", sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    padding: 0.9rem 2.2rem;
+    background: rgba(201,169,110,0.07);
+    color: var(--gold-light);
+    border: 1px solid rgba(201,169,110,0.35);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.35s ease;
+    backdrop-filter: blur(6px);
+    text-decoration: none;
+  }
+  .btn-gold:hover {
+    background: rgba(201,169,110,0.18);
+    border-color: rgba(201,169,110,0.7);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(201,169,110,0.15);
+  }
+
+  .btn-gold-solid {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: fit-content;
+    font-family: "Jost", sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    padding: 0.9rem 2.2rem;
+    background: var(--gold);
+    color: #0a0c0f;
+    border: 1px solid var(--gold);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.35s ease;
+    text-decoration: none;
+  }
+  .btn-gold-solid:hover {
+    background: var(--gold-light);
+    border-color: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(201,169,110,0.3);
+  }
+
+  .fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ornament {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 2rem;
+  }
+
+  .gold-divider {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 1.5rem 0;
+  }
+  .gold-divider.center {
+    margin: 1.5rem auto;
+  }
+
+  .label-cinzel {
+    font-family: "Cinzel", serif;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+}
+
+/* Navbar border */
+.nav-scrolled-border {
+  border-bottom: 1px solid rgba(201,169,110,0.15);
+}
+
+/* Card hover */
+.card-hover {
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+.card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(10,12,15,0.18);
+}
+
+/* Section fade animation */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Ornament line */
+.ornament {
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0 auto 2rem;
+}
+
+/* Dark section */
+.section-dark {
+  background: var(--dark);
+  color: #fff;
+}
+
+/* Noise grain overlay for dark sections */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Scroll animations observer */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

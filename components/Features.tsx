@@ -104,6 +104,7 @@ export default function Features() {
 
         {/* Grid */}
         <div
+          className="features-grid-container"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(4, 1fr)",

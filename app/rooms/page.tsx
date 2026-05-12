@@ -147,9 +147,9 @@ export default function RoomsPage() {
                   fontWeight: 500,
                   padding: "0.5rem 1.2rem",
                   border: "1.5px solid",
-                  borderColor: filter === f.value ? "var(--gold)" : "#e8e2da",
-                  background: filter === f.value ? "var(--gold)" : "transparent",
-                  color: filter === f.value ? "#fff" : "var(--text-muted)",
+                  borderColor: filter === f.value ? "var(--gold)" : "rgba(201,169,110,0.2)",
+                  background: filter === f.value ? "rgba(201,169,110,0.12)" : "transparent",
+                  color: filter === f.value ? "var(--gold-light)" : "var(--text-muted)",
                   borderRadius: "3px",
                   cursor: "pointer",
                   transition: "all 0.3s",
@@ -288,6 +288,7 @@ export default function RoomsPage() {
                 gridTemplateColumns: view === "grid" ? "repeat(3, 1fr)" : "1fr",
                 gap: "2rem",
               }}
+              className="rooms-grid-container"
             >
               {filteredRooms.map((room) => (
                 <RoomCard

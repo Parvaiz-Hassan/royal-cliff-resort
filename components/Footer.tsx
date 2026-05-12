@@ -5,15 +5,16 @@ export default function Footer() {
     <footer style={{ background: "var(--dark)", color: "rgba(255,255,255,0.55)" }}>
       <div style={{ padding: "80px 0 60px" }}>
         <div
-          style={{
-            maxWidth: "1240px",
-            margin: "0 auto",
-            padding: "0 2rem",
-            display: "grid",
-            gridTemplateColumns: "2fr 1fr 1fr 1.5fr",
-            gap: "4rem",
-          }}
-        >
+            className="footer-grid-container"
+            style={{
+              maxWidth: "1240px",
+              margin: "0 auto",
+              padding: "0 2rem",
+              display: "grid",
+              gridTemplateColumns: "2fr 1fr 1fr 1.5fr",
+              gap: "4rem",
+            }}
+          >
           {/* Brand */}
           <div>
             <div
