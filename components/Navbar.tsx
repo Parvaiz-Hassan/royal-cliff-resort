@@ -83,10 +83,12 @@ export default function Navbar() {
           >
             {[
               { label: "Home", href: "/" },
-              { label: "Rooms", href: "/rooms" },
-              { label: "Experiences", href: "/#experiences" },
-              { label: "Gallery", href: "/#gallery" },
-              { label: "Contact", href: "/#contact" },
+            { label: "About", href: "/about" },
+            { label: "Rooms", href: "/rooms" },
+            { label: "Dining", href: "/dining" },
+            { label: "Experiences", href: "/experiences" },
+            { label: "Gallery", href: "/gallery" },
+            { label: "Contact", href: "/contact" },
             ].map((item) => (
               <li key={item.href}>
                 <Link
@@ -207,6 +209,7 @@ export default function Navbar() {
             { label: "Home", href: "/" },
             { label: "About", href: "/about" },
             { label: "Rooms", href: "/rooms" },
+            { label: "Dining", href: "/dining" },
             { label: "Experiences", href: "/experiences" },
             { label: "Gallery", href: "/gallery" },
             { label: "Contact", href: "/contact" },

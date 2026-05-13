@@ -184,7 +184,7 @@ export default function Footer() {
             >
               <div>+91 96222 99302</div>
               <div>contact@royalcliffresort.com</div>
-              <div>Near BP Road, Pahalgam, J&K</div>
+              <div>Dalseer, Near BP Road, Pahalgam, J&K</div>
             </div>
           </div>
         </div>
@@ -212,11 +212,13 @@ export default function Footer() {
         >
           <p>© 2025 Royal Cliff Resort, Pahalgam. All rights reserved.</p>
           <p>
-            <a href="#" style={{ color: "var(--gold-light)" }}>Privacy Policy</a>
-            {" · "}
-            <a href="#" style={{ color: "var(--gold-light)" }}>Terms</a>
-            {" · "}
-            <a href="#" style={{ color: "var(--gold-light)" }}>Cancellation Policy</a>
+            <Link href="/policies/privacy" style={{ color: "var(--gold-light)" }}>Privacy Policy</Link>
+{" · "}
+<Link href="/policies/terms" style={{ color: "var(--gold-light)" }}>Terms</Link>
+{" · "}
+<Link href="/policies/cancellation" style={{ color: "var(--gold-light)" }}>Cancellation</Link>
+{" · "}
+<Link href="/policies/payment" style={{ color: "var(--gold-light)" }}>Payment Policy</Link>
           </p>
         </div>
       </div>
