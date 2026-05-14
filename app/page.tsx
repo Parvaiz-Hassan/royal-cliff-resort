@@ -12,6 +12,8 @@ import Experiences from "@/components/Experiences";
 import Gallery from "@/components/Gallery";
 import Testimonials from "@/components/Testimonials";
 import CTABand from "@/components/CTABand";
+import BlogCarousel from "@/components/BlogCarousel";
+import Partners from "@/components/Partners";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
@@ -34,6 +36,8 @@ export default function Home() {
       <Gallery />
       <Testimonials />
       <CTABand onBook={() => setSelectedRoom(null)} />
+      <BlogCarousel />
+      <Partners />
       <Contact />
       <Footer />
       <WhatsAppFloat />

@@ -11,8 +11,8 @@ export default function Footer() {
               margin: "0 auto",
               padding: "0 2rem",
               display: "grid",
-              gridTemplateColumns: "2fr 1fr 1fr 1.5fr",
-              gap: "4rem",
+              gridTemplateColumns: "2fr 1fr 1fr 1fr 1.5fr",
+              gap: "3rem",
             }}
           >
           {/* Brand */}
@@ -118,6 +118,32 @@ export default function Footer() {
                     }}
                   >
                     {room}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          {/* Policies */}
+          <div>
+            <h4 style={footerHeadStyle}>Policies</h4>
+            <ul style={{ listStyle: "none" }}>
+              {[
+                { label: "Terms & Conditions", href: "/policies/terms" },
+                { label: "Privacy Policy", href: "/policies/privacy" },
+                { label: "Cancellation Policy", href: "/policies/cancellation" },
+                { label: "Payment Policy", href: "/policies/payment" },
+              ].map((link) => (
+                <li key={link.href} style={{ marginBottom: "0.8rem" }}>
+                  <Link
+                    href={link.href}
+                    style={{
+                      fontSize: "0.82rem",
+                      color: "rgba(255,255,255,0.55)",
+                      fontFamily: "var(--font-ui)",
+                      transition: "color 0.3s",
+                    }}
+                  >
+                    {link.label}
                   </Link>
                 </li>
               ))}

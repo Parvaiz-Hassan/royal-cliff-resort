@@ -88,6 +88,7 @@ export default function Navbar() {
             { label: "Dining", href: "/dining" },
             { label: "Experiences", href: "/experiences" },
             { label: "Gallery", href: "/gallery" },
+            { label: "Reviews", href: "/reviews" },
             { label: "Contact", href: "/contact" },
             ].map((item) => (
               <li key={item.href}>
@@ -212,6 +213,7 @@ export default function Navbar() {
             { label: "Dining", href: "/dining" },
             { label: "Experiences", href: "/experiences" },
             { label: "Gallery", href: "/gallery" },
+            { label: "Reviews", href: "/reviews" },
             { label: "Contact", href: "/contact" },
           ].map((item) => (
             <Link
