@@ -4,7 +4,7 @@ import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import BookingBar from "@/components/BookingBar";
-import StatsStrip from "@/components/StatsStrip";
+import BookDirect from "@/components/BookDirect";
 import About from "@/components/About";
 import RoomsSection from "@/components/RoomsSection";
 import Features from "@/components/Features";
@@ -28,7 +28,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <BookingBar />
-      <StatsStrip />
+      <BookDirect />
       <About />
       <RoomsSection onBook={(room) => setSelectedRoom(room)} />
       <Features />

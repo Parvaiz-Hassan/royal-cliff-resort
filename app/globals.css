@@ -107,6 +107,22 @@ html, body {
     grid-template-columns: 1fr !important;
   }
 
+  .about-grid {
+    grid-template-columns: 1fr !important;
+    gap: 3rem !important;
+  }
+
+  .about-grid > div {
+    padding: 0 0.5rem !important;
+  }
+
+.book-direct-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .book-direct-label {
+    display: none !important;
+  }
+
   /* Features grid */
   .features-grid-container {
     grid-template-columns: 1fr !important;

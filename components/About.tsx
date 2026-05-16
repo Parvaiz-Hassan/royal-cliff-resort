@@ -88,8 +88,8 @@ export default function About() {
             className="floating-card"
             style={{
               position: "absolute",
-              bottom: "-2rem",
-              right: "-2rem",
+              bottom: "-1rem",
+              right: "0.5rem",
               background: "#fff",
               padding: "1.5rem 2rem",
               borderRadius: "6px",
@@ -133,7 +133,7 @@ export default function About() {
         </div>
 
         {/* Right — Content */}
-        <div>
+        <div style={{ padding: "0 0.5rem" }}>
           <span
             style={{
               display: "inline-block",
