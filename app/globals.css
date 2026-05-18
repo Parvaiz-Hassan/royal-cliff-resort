@@ -94,6 +94,47 @@ html, body {
   .rooms-grid-container {
     grid-template-columns: 1fr !important;
   }
+/* Room detail page */
+  .room-detail-grid {
+    grid-template-columns: 1fr !important;
+    padding: 1.5rem 1rem 4rem !important;
+  }
+
+  /* Room hero text */
+  .room-hero-text {
+    left: 1.5rem !important;
+    bottom: 1.5rem !important;
+  }
+
+  /* Room hero thumbnails */
+  .room-thumbnails {
+    right: 0.5rem !important;
+    bottom: 0.5rem !important;
+    gap: 0.3rem !important;
+  }
+
+  .room-thumbnails button {
+    width: 48px !important;
+    height: 36px !important;
+    fontSize: 0.4rem !important;
+  }
+
+  /* Booking card on mobile */
+  .room-booking-card {
+    position: static !important;
+    margin-top: 2rem !important;
+  }
+
+  /* Highlights grid */
+  .highlights-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Related rooms */
+  .related-rooms-grid {
+    grid-template-columns: 1fr !important;
+  }
+
 }
 
 @media (max-width: 1024px) {

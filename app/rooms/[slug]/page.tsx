@@ -131,10 +131,11 @@ export default function RoomDetailPage({
       <Navbar />
 
       {/* Hero */}
-      <div style={{ marginTop: "var(--nav-h)", position: "relative" }}>
+      <div style={{ position: "relative" }}>
         <div
           style={{
             height: "65vh",
+            marginTop: "var(--nav-h)",
             background: photos[activePhoto].gradient,
             position: "relative",
             overflow: "hidden",
@@ -165,14 +166,14 @@ export default function RoomDetailPage({
 
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,12,15,0.3) 0%, rgba(10,12,15,0.65) 100%)" }} />
 
-          <div style={{ position: "absolute", bottom: "3rem", left: "4rem", color: "#fff", zIndex: 2 }}>
+          <div className="room-hero-text" style={{ position: "absolute", bottom: "3rem", left: "4rem", color: "#fff", zIndex: 2 }}>
             <p style={{ fontFamily: "var(--font-label)", fontSize: "0.6rem", letterSpacing: "0.4em", color: "var(--gold-light)", marginBottom: "0.6rem" }}>
               ROYAL CLIFF RESORT · PAHALGAM
             </p>
-            <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 4vw, 3.5rem)", fontWeight: 400, lineHeight: 1.1 }}>
+            <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 4vw, 3.5rem)", fontWeight: 400, lineHeight: 1.1, textShadow: "0 2px 8px rgba(0,0,0,0.4)" }}>
               {room.name}
             </h1>
-            <div style={{ display: "flex", gap: "1.5rem", marginTop: "1rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.7)", fontFamily: "var(--font-ui)", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", gap: "1.5rem", marginTop: "1rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.95)", fontFamily: "var(--font-ui)", flexWrap: "wrap", textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}>
               <span>📐 {room.size}</span>
               <span>👤 Up to {room.guests} Guests</span>
               <span>🏔️ {room.view}</span>
@@ -181,7 +182,7 @@ export default function RoomDetailPage({
           </div>
 
           {/* Thumbnails */}
-          <div style={{ position: "absolute", bottom: "2rem", right: "2rem", display: "flex", gap: "0.5rem", zIndex: 2 }}>
+          <div className="room-thumbnails" style={{ position: "absolute", bottom: "2rem", right: "2rem", display: "flex", gap: "0.5rem", zIndex: 2 }}>
             {photos.map((photo, i) => (
               <button
                 key={i}
@@ -278,7 +279,7 @@ export default function RoomDetailPage({
                       </h3>
                       <div style={{ flex: 1, height: "1px", background: "rgba(201,169,110,0.25)" }} />
                     </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.8rem" }}>
+                    <div className="highlights-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.8rem" }}>
                       {highlights.map((h) => (
                         <div key={h} style={{ display: "flex", alignItems: "center", gap: "0.8rem", padding: "0.9rem 1rem", background: "#fff", border: "1px solid rgba(201,169,110,0.15)", borderRadius: "3px", fontSize: "0.82rem", color: "var(--text)", fontFamily: "var(--font-ui)" }}>
                           <span style={{ color: "var(--gold)", fontSize: "0.9rem", flexShrink: 0 }}>✓</span>
@@ -342,7 +343,7 @@ export default function RoomDetailPage({
                   </h3>
                   <div style={{ flex: 1, height: "1px", background: "rgba(201,169,110,0.25)" }} />
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
+                <div className="related-rooms-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
                   {relatedRooms.map((r) => (
                     <Link key={r.id} href={`/rooms/${r.id}`} style={{ textDecoration: "none" }}>
                       <div
@@ -364,6 +365,7 @@ export default function RoomDetailPage({
 
             {/* Right — Booking Card */}
             <div
+              className="room-booking-card"
               style={{
                 position: "sticky",
                 top: "calc(var(--nav-h) + 1.5rem)",
