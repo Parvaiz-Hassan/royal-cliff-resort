@@ -9,6 +9,7 @@ export interface Room {
   tag: string;
   amenities: string[];
   gradient: string;
+  image?: string | null;
 }
 
 export const rooms: Room[] = [
