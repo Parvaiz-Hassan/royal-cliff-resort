@@ -42,25 +42,37 @@ export default function RoomCard({ room, onBook }: RoomCardProps) {
       }}
     >
       {/* Image */}
-      <div style={{ position: "relative", overflow: "hidden", aspectRatio: "4/3" }}>
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            background: room.gradient,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <svg viewBox="0 0 200 150" style={{ width: "60%", opacity: 0.15 }}>
-            <polygon points="100,10 160,100 40,100" fill="white" />
-            <polygon points="40,40 90,100 0,100" fill="rgba(255,255,255,0.5)" />
-            <polygon points="160,50 200,100 120,100" fill="rgba(255,255,255,0.4)" />
-            <circle cx="165" cy="25" r="15" fill="rgba(255,220,100,0.5)" />
-          </svg>
-        </div>
-
+       <div style={{ position: "relative", overflow: "hidden", aspectRatio: "4/3" }}>
+          {room.image ? (
+            <img
+              src={room.image}
+              alt={room.name}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                transition: "transform 0.6s ease",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                background: room.gradient,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <svg viewBox="0 0 200 150" style={{ width: "60%", opacity: 0.15 }}>
+                <polygon points="100,10 160,100 40,100" fill="white" />
+                <polygon points="40,40 90,100 0,100" fill="rgba(255,255,255,0.5)" />
+                <polygon points="160,50 200,100 120,100" fill="rgba(255,255,255,0.4)" />
+                <circle cx="165" cy="25" r="15" fill="rgba(255,220,100,0.5)" />
+              </svg>
+            </div>
+          )}
         {/* Tag */}
         <span
           style={{

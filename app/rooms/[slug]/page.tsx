@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, use } from "react";
+import { useState, useEffect, use } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import BookingModal from "@/components/BookingModal";
-import { rooms } from "@/lib/rooms";
+import { rooms as staticRooms } from "@/lib/rooms";
+import { client, urlFor } from "@/lib/sanity";
+import { roomBySlugQuery } from "@/lib/queries";
 
 type Tab = "overview" | "amenities" | "policies";
 
@@ -17,12 +19,12 @@ export default function RoomDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
-  const room = rooms.find((r) => r.id === slug);
-  if (!room) notFound();
 
   const today = new Date().toISOString().split("T")[0];
   const tomorrow = new Date(Date.now() + 86400000).toISOString().split("T")[0];
 
+  const [room, setRoom] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>("overview");
   const [checkIn, setCheckIn] = useState(today);
   const [checkOut, setCheckOut] = useState(tomorrow);
@@ -36,28 +38,41 @@ export default function RoomDetailPage({
   const [children, setChildren] = useState(0);
   const [childrenAges, setChildrenAges] = useState<string[]>([]);
 
+  useEffect(() => {
+    const staticRoom = staticRooms.find((r) => r.id === slug);
+    if (staticRoom) {
+      setRoom(staticRoom);
+      setLoading(false);
+      return;
+    }
+    client.fetch(roomBySlugQuery, { slug }).then((data) => {
+      if (data) {
+        setRoom({
+          ...data,
+          id: data.slug,
+          guests: data.maxGuests || 2,
+          gradient: "linear-gradient(135deg, #1a2a3a, #2a4a5a)",
+          image: data.images?.[0] ? urlFor(data.images[0]).width(1200).url() : null,
+          amenities: data.amenities || [],
+        });
+      }
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, [slug]);
+
   const nights = Math.max(
     1,
     Math.round(
       (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000
     )
   );
-  const total = room.price * nights;
+  const total = room ? room.price * nights : 0;
   const tax = Math.round(total * 0.12);
 
   const guestSummary =
     children === 0
       ? `${adults} Adult${adults > 1 ? "s" : ""}`
       : `${adults} Adult${adults > 1 ? "s" : ""}, ${children} Child${children > 1 ? "ren" : ""}`;
-
-  const photos: { type: string; gradient: string; label: string; videoUrl?: string }[] = [
-    { type: "image", gradient: room.gradient, label: "Main View" },
-    { type: "image", gradient: "linear-gradient(135deg, #111820, #1a2a35)", label: "Bedroom" },
-    { type: "image", gradient: "linear-gradient(135deg, #1a1008, #2a2010)", label: "Bathroom" },
-    { type: "image", gradient: "linear-gradient(135deg, #0a1020, #152030)", label: "Balcony" },
-    { type: "image", gradient: "linear-gradient(135deg, #100a18, #201530)", label: "View" },
-    { type: "video", gradient: "linear-gradient(135deg, #0a1a0a, #1a3a1a)", label: "Video", videoUrl: "/videos/room-placeholder.mp4" },
-  ];
 
   const highlights = [
     "King-size bed with premium linens",
@@ -82,7 +97,34 @@ export default function RoomDetailPage({
     { label: "Payment", value: "All major cards, UPI, Net Banking accepted" },
   ];
 
-  const relatedRooms = rooms.filter((r) => r.id !== room.id).slice(0, 3);
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--cream)" }}>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ width: "40px", height: "40px", border: "2px solid rgba(201,169,110,0.2)", borderTop: "2px solid var(--gold)", borderRadius: "50%", margin: "0 auto 1rem", animation: "spin 1s linear infinite" }} />
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            <p style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)" }}>Loading room...</p>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  if (!room) return notFound();
+
+  const photos: { type: string; gradient: string; label: string; videoUrl?: string; image?: string }[] = [
+    { type: "image", gradient: room.gradient, label: "Main View", image: room.image || undefined },
+    { type: "image", gradient: "linear-gradient(135deg, #111820, #1a2a35)", label: "Bedroom" },
+    { type: "image", gradient: "linear-gradient(135deg, #1a1008, #2a2010)", label: "Bathroom" },
+    { type: "image", gradient: "linear-gradient(135deg, #0a1020, #152030)", label: "Balcony" },
+    { type: "image", gradient: "linear-gradient(135deg, #100a18, #201530)", label: "View" },
+    { type: "video", gradient: "linear-gradient(135deg, #0a1a0a, #1a3a1a)", label: "Video", videoUrl: room.videoUrl || "/videos/room-placeholder.mp4" },
+  ];
+
+  const relatedRooms = staticRooms.filter((r) => r.id !== slug).slice(0, 3);
 
   return (
     <>
@@ -103,22 +145,15 @@ export default function RoomDetailPage({
           }}
         >
           {photos[activePhoto].type === "video" ? (
-            <video
-              key={photos[activePhoto].videoUrl}
-              autoPlay
-              muted
-              loop
-              playsInline
-              style={{
-                position: "absolute",
-                inset: 0,
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              }}
-            >
+            <video autoPlay muted loop playsInline style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}>
               <source src={photos[activePhoto].videoUrl || ""} type="video/mp4" />
             </video>
+          ) : photos[activePhoto].image ? (
+            <img
+              src={photos[activePhoto].image}
+              alt={room.name}
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+            />
           ) : (
             <svg viewBox="0 0 400 300" style={{ width: "30%", opacity: 0.07 }}>
               <polygon points="200,20 320,200 80,200" fill="white" />
@@ -141,7 +176,7 @@ export default function RoomDetailPage({
               <span>📐 {room.size}</span>
               <span>👤 Up to {room.guests} Guests</span>
               <span>🏔️ {room.view}</span>
-              <span style={{ color: "var(--gold-light)" }}>{"₹"}{room.price.toLocaleString("en-IN")} / night</span>
+              <span style={{ color: "var(--gold-light)" }}>{"₹"}{room.price?.toLocaleString("en-IN")} / night</span>
             </div>
           </div>
 
@@ -166,10 +201,14 @@ export default function RoomDetailPage({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  overflow: "hidden",
+                  padding: 0,
                 }}
               >
                 {photo.type === "video" ? (
                   <span>{"▶"}</span>
+                ) : photo.image ? (
+                  <img src={photo.image} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 ) : (
                   <span>{photo.label}</span>
                 )}
@@ -261,7 +300,7 @@ export default function RoomDetailPage({
                     <div style={{ flex: 1, height: "1px", background: "rgba(201,169,110,0.25)" }} />
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.8rem" }}>
-                    {room.amenities.map((a) => (
+                    {(room.amenities || []).map((a: string) => (
                       <div key={a} style={{ display: "flex", alignItems: "center", gap: "0.8rem", padding: "1rem", background: "#fff", border: "1px solid rgba(201,169,110,0.15)", borderRadius: "3px", fontSize: "0.85rem", color: "var(--text)", fontFamily: "var(--font-ui)" }}>
                         <span style={{ color: "var(--gold)", fontSize: "1rem", flexShrink: 0 }}>✓</span>
                         {a}
@@ -341,14 +380,13 @@ export default function RoomDetailPage({
                   STARTING FROM
                 </div>
                 <div style={{ fontFamily: "var(--font-display)", fontSize: "2.8rem", fontWeight: 400, color: "#fff", lineHeight: 1 }}>
-                  {"₹"}{room.price.toLocaleString("en-IN")}
+                  {"₹"}{room.price?.toLocaleString("en-IN")}
                   <span style={{ fontFamily: "var(--font-body)", fontSize: "1rem", fontStyle: "italic", color: "rgba(255,255,255,0.4)", fontWeight: 300 }}> per night</span>
                 </div>
               </div>
 
               {/* Form body */}
               <div style={{ padding: "1.8rem 2rem" }}>
-
                 {/* Dates */}
                 <div style={{ marginBottom: "1.2rem" }}>
                   <div style={{ fontFamily: "var(--font-label)", fontSize: "0.55rem", letterSpacing: "0.3em", color: "var(--text-muted)", marginBottom: "0.8rem" }}>DATES</div>
@@ -377,7 +415,6 @@ export default function RoomDetailPage({
 
                   {showGuestPicker && (
                     <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, background: "var(--dark)", border: "1px solid rgba(201,169,110,0.2)", borderRadius: "4px", padding: "1.2rem", zIndex: 100, boxShadow: "0 12px 40px rgba(0,0,0,0.2)" }}>
-
                       {/* Adults */}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                         <div>
@@ -387,7 +424,7 @@ export default function RoomDetailPage({
                         <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
                           <button onClick={() => setAdults(Math.max(1, adults - 1))} style={{ width: "28px", height: "28px", borderRadius: "50%", border: "1px solid rgba(201,169,110,0.3)", background: "transparent", color: "var(--gold)", cursor: "pointer", fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}>−</button>
                           <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.95rem", color: "#fff", minWidth: "20px", textAlign: "center" }}>{adults}</span>
-                          <button onClick={() => setAdults(Math.min(room.guests, adults + 1))} style={{ width: "28px", height: "28px", borderRadius: "50%", border: "1px solid rgba(201,169,110,0.3)", background: "transparent", color: "var(--gold)", cursor: "pointer", fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
+                          <button onClick={() => setAdults(Math.min(room.guests || 6, adults + 1))} style={{ width: "28px", height: "28px", borderRadius: "50%", border: "1px solid rgba(201,169,110,0.3)", background: "transparent", color: "var(--gold)", cursor: "pointer", fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
                         </div>
                       </div>
 
@@ -424,7 +461,6 @@ export default function RoomDetailPage({
                         </div>
                       )}
 
-                      {/* Done */}
                       <button onClick={() => setShowGuestPicker(false)} style={{ width: "100%", padding: "0.75rem", background: "var(--gold)", color: "#0a0c0f", border: "none", borderRadius: "3px", fontFamily: "var(--font-label)", fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.25em", textTransform: "uppercase", cursor: "pointer" }}>
                         Done
                       </button>
@@ -432,7 +468,7 @@ export default function RoomDetailPage({
                   )}
                 </div>
 
-                {/* Availability result badge */}
+                {/* Availability badge */}
                 {availabilityChecked && (
                   <div style={{ marginBottom: "1.2rem", padding: "1rem", background: "rgba(34,139,34,0.08)", border: "1px solid rgba(34,139,34,0.25)", borderRadius: "3px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.3rem" }}>
@@ -506,14 +542,8 @@ export default function RoomDetailPage({
 
       {/* Availability Modal */}
       {showAvailability && (
-        <div
-          onClick={() => setShowAvailability(false)}
-          style={{ position: "fixed", inset: 0, zIndex: 3000, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{ background: "var(--dark)", border: "1px solid rgba(201,169,110,0.2)", borderRadius: "8px", padding: "2rem", width: "100%", maxWidth: "380px", boxShadow: "0 30px 80px rgba(0,0,0,0.4)" }}
-          >
+        <div onClick={() => setShowAvailability(false)} style={{ position: "fixed", inset: 0, zIndex: 3000, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "var(--dark)", border: "1px solid rgba(201,169,110,0.2)", borderRadius: "8px", padding: "2rem", width: "100%", maxWidth: "380px", boxShadow: "0 30px 80px rgba(0,0,0,0.4)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
               <div>
                 <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", color: "#fff", fontWeight: 400 }}>Availability</h3>
@@ -521,7 +551,6 @@ export default function RoomDetailPage({
               </div>
               <button onClick={() => setShowAvailability(false)} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.5)", fontSize: "1.3rem", cursor: "pointer" }}>✕</button>
             </div>
-
             {!availabilityChecked ? (
               <div style={{ textAlign: "center", padding: "2rem 0" }}>
                 <div style={{ width: "50px", height: "50px", border: "2px solid rgba(201,169,110,0.2)", borderTop: "2px solid var(--gold)", borderRadius: "50%", margin: "0 auto 1rem", animation: "spin 1s linear infinite" }} />
@@ -547,10 +576,7 @@ export default function RoomDetailPage({
                     <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.85rem", color: item.label === "Total" ? "var(--gold)" : "#fff", fontWeight: item.label === "Total" ? 600 : 400 }}>{item.value}</span>
                   </div>
                 ))}
-                <button
-                  onClick={() => { setShowAvailability(false); setShowBooking(true); }}
-                  style={{ width: "100%", padding: "1rem", background: "var(--gold)", color: "#0a0c0f", border: "none", borderRadius: "3px", fontFamily: "var(--font-label)", fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.25em", textTransform: "uppercase", cursor: "pointer", marginTop: "1.5rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
-                >
+                <button onClick={() => { setShowAvailability(false); setShowBooking(true); }} style={{ width: "100%", padding: "1rem", background: "var(--gold)", color: "#0a0c0f", border: "none", borderRadius: "3px", fontFamily: "var(--font-label)", fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.25em", textTransform: "uppercase", cursor: "pointer", marginTop: "1.5rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
                   Proceed to Reservation
                 </button>
               </div>
@@ -561,14 +587,8 @@ export default function RoomDetailPage({
 
       {/* Assistance Modal */}
       {showAssistance && (
-        <div
-          onClick={() => setShowAssistance(false)}
-          style={{ position: "fixed", inset: 0, zIndex: 3000, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{ background: "var(--dark)", border: "1px solid rgba(201,169,110,0.2)", borderRadius: "8px", padding: "2rem", width: "100%", maxWidth: "360px", boxShadow: "0 30px 80px rgba(0,0,0,0.4)" }}
-          >
+        <div onClick={() => setShowAssistance(false)} style={{ position: "fixed", inset: 0, zIndex: 3000, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "var(--dark)", border: "1px solid rgba(201,169,110,0.2)", borderRadius: "8px", padding: "2rem", width: "100%", maxWidth: "360px", boxShadow: "0 30px 80px rgba(0,0,0,0.4)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.8rem" }}>
               <div>
                 <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", color: "#fff", fontWeight: 400 }}>Get in Touch</h3>
@@ -581,13 +601,7 @@ export default function RoomDetailPage({
               { icon: "✉️", label: "Email", value: "contact@royalcliffresort.com", href: "mailto:contact@royalcliffresort.com" },
               { icon: "💬", label: "WhatsApp", value: "Chat with us instantly", href: "https://wa.me/919622299302" },
             ].map((item, i) => (
-              <a
-                key={item.label}
-                href={item.href}
-                target={item.href.startsWith("http") ? "_blank" : undefined}
-                rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                style={{ display: "flex", alignItems: "center", gap: "1rem", padding: "1rem 0", borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.06)" : "none", textDecoration: "none" }}
-              >
+              <a key={item.label} href={item.href} target={item.href.startsWith("http") ? "_blank" : undefined} rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined} style={{ display: "flex", alignItems: "center", gap: "1rem", padding: "1rem 0", borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.06)" : "none", textDecoration: "none" }}>
                 <div style={{ width: "42px", height: "42px", borderRadius: "50%", background: "rgba(201,169,110,0.1)", border: "1px solid rgba(201,169,110,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.1rem", flexShrink: 0 }}>
                   {item.icon}
                 </div>
