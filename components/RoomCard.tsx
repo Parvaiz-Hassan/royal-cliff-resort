@@ -1,19 +1,7 @@
 "use client";
 
 import Link from "next/link";
-
-interface Room {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  size: string;
-  guests: number;
-  view: string;
-  tag: string;
-  amenities: string[];
-  gradient: string;
-}
+import { Room } from "@/lib/rooms"
 
 interface RoomCardProps {
   room: Room;
