@@ -6,29 +6,30 @@ import Link from "next/link";
 const slides = [
   {
     id: 1,
-    type: "gradient" as const,
+    type: "image" as const,
+    image: "https://res.cloudinary.com/dhnglltpo/image/upload/v1779170928/royal-cliff-resort-pahalgam-external-view-01_1_aji57q.webp",
     gradient: "linear-gradient(135deg, #0a1a2a 0%, #1a3a4a 50%, #0a2030 100%)",
     label: "Valley Views",
   },
   {
     id: 2,
-    type: "gradient" as const,
+    type: "image" as const,
+    image: "https://res.cloudinary.com/dhnglltpo/image/upload/v1779174369/royal-cliff-resort-pahalgam-external-view-02_rwuwo4.webp",
     gradient: "linear-gradient(135deg, #1a0a0a 0%, #3a1a10 50%, #2a1008 100%)",
     label: "Luxury Suites",
   },
   {
     id: 3,
-    type: "gradient" as const,
+    type: "image" as const,
+    image: "https://res.cloudinary.com/dhnglltpo/image/upload/v1779174540/royal-cliff-resort-pahalgam-external-view-03_fpqana.webp",
     gradient: "linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 50%, #0a0a20 100%)",
     label: "Kashmir Nature",
   },
   {
     id: 4,
     type: "video" as const,
-    // Replace this URL with your actual MP4 video URL
-    videoUrl: "/videos/your-hero-video.mp4",
+    videoUrl: "/videos/hero-video.mp4",
     label: "Resort Video",
-    // Placeholder gradient shown before video loads
     gradient: "linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 50%, #0a2010 100%)",
   },
 ];
@@ -76,11 +77,24 @@ export default function Hero() {
           style={{
             position: "absolute",
             inset: 0,
+            background: slide.gradient,
             opacity: i === current ? 1 : 0,
             transition: "opacity 1.2s ease",
-            background: slide.gradient,
           }}
         >
+          {slide.type === "image" && slide.image && (
+            <img
+              src={slide.image}
+              alt={slide.label}
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            />
+          )}
           {slide.type === "video" && i === current && (
             <>
               {/* Video element */}

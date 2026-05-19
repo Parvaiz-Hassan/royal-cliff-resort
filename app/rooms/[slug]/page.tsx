@@ -37,6 +37,7 @@ export default function RoomDetailPage({
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [childrenAges, setChildrenAges] = useState<string[]>([]);
+  const [relatedIndex, setRelatedIndex] = useState(0);
 
   useEffect(() => {
     const staticRoom = staticRooms.find((r) => r.id === slug);
@@ -60,19 +61,18 @@ export default function RoomDetailPage({
     }).catch(() => setLoading(false));
   }, [slug]);
 
-  const nights = Math.max(
-    1,
-    Math.round(
-      (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000
-    )
-  );
+  const nights = Math.max(1, Math.round((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000));
   const total = room ? room.price * nights : 0;
   const tax = Math.round(total * 0.12);
 
-  const guestSummary =
-    children === 0
-      ? `${adults} Adult${adults > 1 ? "s" : ""}`
-      : `${adults} Adult${adults > 1 ? "s" : ""}, ${children} Child${children > 1 ? "ren" : ""}`;
+  const guestSummary = children === 0
+    ? `${adults} Adult${adults > 1 ? "s" : ""}`
+    : `${adults} Adult${adults > 1 ? "s" : ""}, ${children} Child${children > 1 ? "ren" : ""}`;
+
+  const getYouTubeId = (url: string) => {
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
+    return match ? match[1] : "";
+  };
 
   const highlights = [
     "King-size bed with premium linens",
@@ -116,7 +116,7 @@ export default function RoomDetailPage({
   if (!room) return notFound();
 
   const photos: { type: string; gradient: string; label: string; videoUrl?: string; image?: string }[] = [
-    { type: "image", gradient: room.gradient, label: "Main View", image: room.image || undefined },
+    { type: "image", gradient: room.gradient || "linear-gradient(135deg, #1a2a3a, #2a4a5a)", label: "Main View", image: room.image || undefined },
     { type: "image", gradient: "linear-gradient(135deg, #111820, #1a2a35)", label: "Bedroom" },
     { type: "image", gradient: "linear-gradient(135deg, #1a1008, #2a2010)", label: "Bathroom" },
     { type: "image", gradient: "linear-gradient(135deg, #0a1020, #152030)", label: "Balcony" },
@@ -124,37 +124,40 @@ export default function RoomDetailPage({
     { type: "video", gradient: "linear-gradient(135deg, #0a1a0a, #1a3a1a)", label: "Video", videoUrl: room.videoUrl || "/videos/room-placeholder.mp4" },
   ];
 
-  const relatedRooms = staticRooms.filter((r) => r.id !== slug).slice(0, 3);
+  const relatedRooms = staticRooms.filter((r) => r.id !== slug);
 
   return (
     <>
       <Navbar />
 
-      {/* Hero */}
+      {/* Hero — starts right from top, navbar is transparent overlay */}
       <div style={{ position: "relative" }}>
         <div
           style={{
-            height: "65vh",
-            marginTop: "var(--nav-h)",
+            height: "56vh",
             background: photos[activePhoto].gradient,
             position: "relative",
             overflow: "hidden",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            transition: "background 0.6s ease",
           }}
         >
+          {/* Media */}
           {photos[activePhoto].type === "video" ? (
-            <video autoPlay muted loop playsInline style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}>
-              <source src={photos[activePhoto].videoUrl || ""} type="video/mp4" />
-            </video>
+            photos[activePhoto].videoUrl?.includes("youtube") || photos[activePhoto].videoUrl?.includes("youtu.be") ? (
+              <iframe
+                src={`https://www.youtube.com/embed/${getYouTubeId(photos[activePhoto].videoUrl || "")}?autoplay=1&mute=1&loop=1&playlist=${getYouTubeId(photos[activePhoto].videoUrl || "")}&controls=0&showinfo=0&rel=0&modestbranding=1`}
+                style={{ position: "absolute", inset: "-60px 0", width: "100%", height: "calc(100% + 120px)", border: "none" }}
+                allow="autoplay; encrypted-media"
+              />
+            ) : (
+              <video autoPlay muted loop playsInline style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}>
+                <source src={photos[activePhoto].videoUrl || ""} type="video/mp4" />
+              </video>
+            )
           ) : photos[activePhoto].image ? (
-            <img
-              src={photos[activePhoto].image}
-              alt={room.name}
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
-            />
+            <img src={photos[activePhoto].image} alt={room.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
           ) : (
             <svg viewBox="0 0 400 300" style={{ width: "30%", opacity: 0.07 }}>
               <polygon points="200,20 320,200 80,200" fill="white" />
@@ -164,16 +167,18 @@ export default function RoomDetailPage({
             </svg>
           )}
 
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,12,15,0.3) 0%, rgba(10,12,15,0.65) 100%)" }} />
+          {/* Gradient overlay */}
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,12,15,0.55) 0%, rgba(10,12,15,0.2) 40%, rgba(10,12,15,0.7) 100%)" }} />
 
-          <div className="room-hero-text" style={{ position: "absolute", bottom: "3rem", left: "4rem", color: "#fff", zIndex: 2 }}>
-            <p style={{ fontFamily: "var(--font-label)", fontSize: "0.6rem", letterSpacing: "0.4em", color: "var(--gold-light)", marginBottom: "0.6rem" }}>
+          {/* Room info — bottom left */}
+          <div style={{ position: "absolute", bottom: "4rem", left: "2rem", color: "#fff", zIndex: 2, paddingTop: "var(--nav-h)" }}>
+            <p style={{ fontFamily: "var(--font-label)", fontSize: "0.55rem", letterSpacing: "0.4em", color: "var(--gold-light)", marginBottom: "0.5rem" }}>
               ROYAL CLIFF RESORT · PAHALGAM
             </p>
-            <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 4vw, 3.5rem)", fontWeight: 400, lineHeight: 1.1, textShadow: "0 2px 8px rgba(0,0,0,0.4)" }}>
+            <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.6rem, 4vw, 3rem)", fontWeight: 400, lineHeight: 1.1, textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}>
               {room.name}
             </h1>
-            <div style={{ display: "flex", gap: "1.5rem", marginTop: "1rem", fontSize: "0.8rem", color: "rgba(255,255,255,0.95)", fontFamily: "var(--font-ui)", flexWrap: "wrap", textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}>
+            <div style={{ display: "flex", gap: "1rem", marginTop: "0.6rem", fontSize: "0.75rem", color: "rgba(255,255,255,0.9)", fontFamily: "var(--font-ui)", flexWrap: "wrap", textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}>
               <span>📐 {room.size}</span>
               <span>👤 Up to {room.guests} Guests</span>
               <span>🏔️ {room.view}</span>
@@ -181,22 +186,23 @@ export default function RoomDetailPage({
             </div>
           </div>
 
-          {/* Thumbnails */}
-          <div className="room-thumbnails" style={{ position: "absolute", bottom: "2rem", right: "2rem", display: "flex", gap: "0.5rem", zIndex: 2 }}>
+          {/* Thumbnails — bottom right, horizontal scroll on mobile */}
+          <div style={{ position: "absolute", bottom: "1rem", right: "1rem", display: "flex", gap: "0.4rem", zIndex: 2, overflowX: "auto", maxWidth: "calc(100% - 2rem)" }}>
             {photos.map((photo, i) => (
               <button
                 key={i}
                 onClick={() => setActivePhoto(i)}
                 style={{
-                  width: "64px",
-                  height: "48px",
+                  width: "56px",
+                  height: "42px",
+                  flexShrink: 0,
                   background: photo.gradient,
-                  border: i === activePhoto ? "2px solid var(--gold)" : "2px solid rgba(255,255,255,0.2)",
+                  border: i === activePhoto ? "2px solid var(--gold)" : "2px solid rgba(255,255,255,0.3)",
                   borderRadius: "3px",
                   cursor: "pointer",
-                  opacity: i === activePhoto ? 1 : 0.6,
+                  opacity: i === activePhoto ? 1 : 0.65,
                   transition: "all 0.3s",
-                  fontSize: photo.type === "video" ? "1.1rem" : "0.45rem",
+                  fontSize: photo.type === "video" ? "1rem" : "0.4rem",
                   color: "rgba(255,255,255,0.9)",
                   fontFamily: "var(--font-ui)",
                   display: "flex",
@@ -219,8 +225,8 @@ export default function RoomDetailPage({
         </div>
 
         {/* Breadcrumb */}
-        <div style={{ background: "#fff", borderBottom: "1px solid #f0ead8", padding: "0.9rem 0" }}>
-          <div style={{ maxWidth: "1240px", margin: "0 auto", padding: "0 2rem", display: "flex", gap: "0.5rem", fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-ui)", alignItems: "center" }}>
+        <div style={{ background: "#fff", borderBottom: "1px solid #f0ead8", padding: "0.8rem 0" }}>
+          <div style={{ maxWidth: "1240px", margin: "0 auto", padding: "0 1.5rem", display: "flex", gap: "0.5rem", fontSize: "0.72rem", color: "var(--text-muted)", fontFamily: "var(--font-ui)", alignItems: "center", flexWrap: "wrap" }}>
             <Link href="/" style={{ color: "var(--gold)" }}>Home</Link>
             <span>›</span>
             <Link href="/rooms" style={{ color: "var(--gold)" }}>Rooms</Link>
@@ -231,310 +237,325 @@ export default function RoomDetailPage({
 
         {/* Main content */}
         <div style={{ background: "var(--cream)", minHeight: "100vh" }}>
-          <div
-            style={{ maxWidth: "1240px", margin: "0 auto", padding: "3rem 2rem 6rem", display: "grid", gridTemplateColumns: "1fr 380px", gap: "4rem", alignItems: "start" }}
-            className="room-detail-grid"
-          >
-            {/* Left */}
-            <div>
-              {/* Tabs */}
-              <div style={{ display: "flex", borderBottom: "1px solid #f0ead8", marginBottom: "2.5rem" }}>
-                {(["overview", "amenities", "policies"] as Tab[]).map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => setTab(t)}
-                    style={{
-                      fontFamily: "var(--font-label)",
-                      fontSize: "0.62rem",
-                      letterSpacing: "0.25em",
-                      textTransform: "uppercase",
-                      padding: "1rem 2rem",
-                      background: "none",
-                      border: "none",
-                      borderBottom: tab === t ? "2px solid var(--gold)" : "2px solid transparent",
-                      color: tab === t ? "var(--gold)" : "var(--text-muted)",
-                      cursor: "pointer",
-                      transition: "all 0.3s",
-                      marginBottom: "-1px",
-                    }}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
+          <div style={{ maxWidth: "1240px", margin: "0 auto", padding: "2.5rem 1.5rem 6rem" }} className="room-detail-wrapper">
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 360px", gap: "3rem", alignItems: "start" }} className="room-detail-grid">
 
-              {/* Overview */}
-              {tab === "overview" && (
-                <div>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", lineHeight: 1.9, color: "var(--text-muted)", marginBottom: "1rem" }}>
-                    {room.description}
-                  </p>
-                  <p style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", lineHeight: 1.9, color: "var(--text-muted)", marginBottom: "2.5rem" }}>
-                    Every corner of this room has been thoughtfully designed to reflect the beauty of Kashmir — from the hand-embroidered cushions to the locally sourced wood finishes. Wake up to mountain air, step onto your private balcony, and let the valley do the rest.
-                  </p>
-                  <div style={{ marginBottom: "2.5rem" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}>
-                      <h3 style={{ fontFamily: "var(--font-label)", fontSize: "0.65rem", letterSpacing: "0.3em", color: "var(--gold)", textTransform: "uppercase", whiteSpace: "nowrap" }}>
-                        Highlights
+              {/* LEFT CONTENT */}
+              <div style={{ minWidth: 0 }}>
+
+                {/* Tabs — horizontal scroll on mobile */}
+                <div style={{ borderBottom: "1px solid #f0ead8", marginBottom: "2rem", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+                  <div style={{ display: "flex", minWidth: "max-content" }}>
+                    {(["overview", "amenities", "policies"] as Tab[]).map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => setTab(t)}
+                        style={{
+                          fontFamily: "var(--font-label)",
+                          fontSize: "0.6rem",
+                          letterSpacing: "0.25em",
+                          textTransform: "uppercase",
+                          padding: "0.9rem 1.5rem",
+                          background: "none",
+                          border: "none",
+                          borderBottom: tab === t ? "2px solid var(--gold)" : "2px solid transparent",
+                          color: tab === t ? "var(--gold)" : "var(--text-muted)",
+                          cursor: "pointer",
+                          transition: "all 0.3s",
+                          marginBottom: "-1px",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Overview */}
+                {tab === "overview" && (
+                  <div>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "1.05rem", lineHeight: 1.9, color: "var(--text-muted)", marginBottom: "1rem" }}>
+                      {room.description}
+                    </p>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: "1.05rem", lineHeight: 1.9, color: "var(--text-muted)", marginBottom: "2rem" }}>
+                      Every corner of this room has been thoughtfully designed to reflect the beauty of Kashmir — from the hand-embroidered cushions to the locally sourced wood finishes.
+                    </p>
+
+                    {/* Highlights */}
+                    <div style={{ marginBottom: "2rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.2rem" }}>
+                        <h3 style={{ fontFamily: "var(--font-label)", fontSize: "0.62rem", letterSpacing: "0.3em", color: "var(--gold)", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+                          Highlights
+                        </h3>
+                        <div style={{ flex: 1, height: "1px", background: "rgba(201,169,110,0.25)" }} />
+                      </div>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.7rem" }}>
+                        {highlights.map((h) => (
+                          <div key={h} style={{ display: "flex", alignItems: "flex-start", gap: "0.6rem", padding: "0.8rem", background: "#fff", border: "1px solid rgba(201,169,110,0.15)", borderRadius: "3px", fontSize: "0.8rem", color: "var(--text)", fontFamily: "var(--font-ui)", lineHeight: 1.4 }}>
+                            <span style={{ color: "var(--gold)", fontSize: "0.85rem", flexShrink: 0, marginTop: "1px" }}>✓</span>
+                            {h}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Amenities */}
+                {tab === "amenities" && (
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.2rem" }}>
+                      <h3 style={{ fontFamily: "var(--font-label)", fontSize: "0.62rem", letterSpacing: "0.3em", color: "var(--gold)", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+                        Room Amenities
                       </h3>
                       <div style={{ flex: 1, height: "1px", background: "rgba(201,169,110,0.25)" }} />
                     </div>
-                    <div className="highlights-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.8rem" }}>
-                      {highlights.map((h) => (
-                        <div key={h} style={{ display: "flex", alignItems: "center", gap: "0.8rem", padding: "0.9rem 1rem", background: "#fff", border: "1px solid rgba(201,169,110,0.15)", borderRadius: "3px", fontSize: "0.82rem", color: "var(--text)", fontFamily: "var(--font-ui)" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.7rem" }}>
+                      {(room.amenities || []).map((a: string) => (
+                        <div key={a} style={{ display: "flex", alignItems: "center", gap: "0.6rem", padding: "0.8rem", background: "#fff", border: "1px solid rgba(201,169,110,0.15)", borderRadius: "3px", fontSize: "0.82rem", color: "var(--text)", fontFamily: "var(--font-ui)" }}>
                           <span style={{ color: "var(--gold)", fontSize: "0.9rem", flexShrink: 0 }}>✓</span>
-                          {h}
+                          {a}
                         </div>
                       ))}
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Amenities */}
-              {tab === "amenities" && (
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}>
-                    <h3 style={{ fontFamily: "var(--font-label)", fontSize: "0.65rem", letterSpacing: "0.3em", color: "var(--gold)", textTransform: "uppercase", whiteSpace: "nowrap" }}>
-                      Room Amenities
-                    </h3>
-                    <div style={{ flex: 1, height: "1px", background: "rgba(201,169,110,0.25)" }} />
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.8rem" }}>
-                    {(room.amenities || []).map((a: string) => (
-                      <div key={a} style={{ display: "flex", alignItems: "center", gap: "0.8rem", padding: "1rem", background: "#fff", border: "1px solid rgba(201,169,110,0.15)", borderRadius: "3px", fontSize: "0.85rem", color: "var(--text)", fontFamily: "var(--font-ui)" }}>
-                        <span style={{ color: "var(--gold)", fontSize: "1rem", flexShrink: 0 }}>✓</span>
-                        {a}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Policies */}
-              {tab === "policies" && (
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}>
-                    <h3 style={{ fontFamily: "var(--font-label)", fontSize: "0.65rem", letterSpacing: "0.3em", color: "var(--gold)", textTransform: "uppercase", whiteSpace: "nowrap" }}>
-                      Hotel Policies
-                    </h3>
-                    <div style={{ flex: 1, height: "1px", background: "rgba(201,169,110,0.25)" }} />
-                  </div>
-                  <div style={{ background: "#fff", borderRadius: "6px", border: "1px solid #f0ead8", overflow: "hidden" }}>
-                    {policies.map((p, i) => (
-                      <div key={p.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "1.1rem 1.5rem", borderBottom: i < policies.length - 1 ? "1px solid #f0ead8" : "none", gap: "2rem" }}>
-                        <span style={{ fontFamily: "var(--font-label)", fontSize: "0.6rem", letterSpacing: "0.2em", color: "var(--gold)", textTransform: "uppercase", flexShrink: 0 }}>
-                          {p.label}
-                        </span>
-                        <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.85rem", color: "var(--text-muted)", textAlign: "right" }}>
-                          {p.value}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Related rooms */}
-              <div style={{ marginTop: "4rem" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}>
-                  <h3 style={{ fontFamily: "var(--font-label)", fontSize: "0.65rem", letterSpacing: "0.3em", color: "var(--gold)", textTransform: "uppercase", whiteSpace: "nowrap" }}>
-                    You May Also Like
-                  </h3>
-                  <div style={{ flex: 1, height: "1px", background: "rgba(201,169,110,0.25)" }} />
-                </div>
-                <div className="related-rooms-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
-                  {relatedRooms.map((r) => (
-                    <Link key={r.id} href={`/rooms/${r.id}`} style={{ textDecoration: "none" }}>
-                      <div
-                        style={{ borderRadius: "4px", overflow: "hidden", border: "1px solid #f0ead8", transition: "all 0.3s", background: "#fff" }}
-                        onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = "rgba(201,169,110,0.4)"; el.style.transform = "translateY(-4px)"; el.style.boxShadow = "0 12px 40px rgba(26,22,18,0.1)"; }}
-                        onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = "#f0ead8"; el.style.transform = "translateY(0)"; el.style.boxShadow = "none"; }}
-                      >
-                        <div style={{ height: "100px", background: r.gradient }} />
-                        <div style={{ padding: "0.9rem" }}>
-                          <div style={{ fontFamily: "var(--font-display)", fontSize: "0.95rem", color: "var(--dark)", marginBottom: "0.3rem" }}>{r.name}</div>
-                          <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.78rem", color: "var(--gold)", fontWeight: 600 }}>{"₹"}{r.price.toLocaleString("en-IN")} / night</div>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Right — Booking Card */}
-            <div
-              className="room-booking-card"
-              style={{
-                position: "sticky",
-                top: "calc(var(--nav-h) + 1.5rem)",
-                background: "#fff",
-                border: "1px solid rgba(201,169,110,0.2)",
-                borderRadius: "6px",
-                overflow: "visible",
-                boxShadow: "0 20px 60px rgba(26,22,18,0.12)",
-              }}
-            >
-              {/* Dark price header */}
-              <div style={{ padding: "1.8rem 2rem", borderBottom: "1px solid rgba(201,169,110,0.15)", textAlign: "center", background: "var(--dark)", borderRadius: "6px 6px 0 0" }}>
-                <div style={{ fontFamily: "var(--font-label)", fontSize: "0.55rem", letterSpacing: "0.35em", color: "rgba(255,255,255,0.4)", marginBottom: "0.5rem" }}>
-                  STARTING FROM
-                </div>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: "2.8rem", fontWeight: 400, color: "#fff", lineHeight: 1 }}>
-                  {"₹"}{room.price?.toLocaleString("en-IN")}
-                  <span style={{ fontFamily: "var(--font-body)", fontSize: "1rem", fontStyle: "italic", color: "rgba(255,255,255,0.4)", fontWeight: 300 }}> per night</span>
-                </div>
-              </div>
-
-              {/* Form body */}
-              <div style={{ padding: "1.8rem 2rem" }}>
-                {/* Dates */}
-                <div style={{ marginBottom: "1.2rem" }}>
-                  <div style={{ fontFamily: "var(--font-label)", fontSize: "0.55rem", letterSpacing: "0.3em", color: "var(--text-muted)", marginBottom: "0.8rem" }}>DATES</div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.8rem" }}>
-                    <div>
-                      <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.65rem", color: "var(--text-muted)", marginBottom: "0.4rem" }}>Check-in</div>
-                      <input type="date" value={checkIn} min={today} onChange={(e) => setCheckIn(e.target.value)} style={{ width: "100%", padding: "0.7rem 0.8rem", background: "var(--cream)", border: "1px solid #e8e2da", borderRadius: "3px", color: "var(--text)", fontFamily: "var(--font-ui)", fontSize: "0.82rem", outline: "none" }} />
+                {/* Policies */}
+                {tab === "policies" && (
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.2rem" }}>
+                      <h3 style={{ fontFamily: "var(--font-label)", fontSize: "0.62rem", letterSpacing: "0.3em", color: "var(--gold)", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+                        Hotel Policies
+                      </h3>
+                      <div style={{ flex: 1, height: "1px", background: "rgba(201,169,110,0.25)" }} />
                     </div>
-                    <div>
-                      <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.65rem", color: "var(--text-muted)", marginBottom: "0.4rem" }}>Check-out</div>
-                      <input type="date" value={checkOut} min={checkIn} onChange={(e) => setCheckOut(e.target.value)} style={{ width: "100%", padding: "0.7rem 0.8rem", background: "var(--cream)", border: "1px solid #e8e2da", borderRadius: "3px", color: "var(--text)", fontFamily: "var(--font-ui)", fontSize: "0.82rem", outline: "none" }} />
+                    <div style={{ background: "#fff", borderRadius: "6px", border: "1px solid #f0ead8", overflow: "hidden" }}>
+                      {policies.map((p, i) => (
+                        <div key={p.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "1rem 1.2rem", borderBottom: i < policies.length - 1 ? "1px solid #f0ead8" : "none", gap: "1rem", flexWrap: "wrap" }}>
+                          <span style={{ fontFamily: "var(--font-label)", fontSize: "0.58rem", letterSpacing: "0.2em", color: "var(--gold)", textTransform: "uppercase", flexShrink: 0 }}>
+                            {p.label}
+                          </span>
+                          <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.82rem", color: "var(--text-muted)" }}>
+                            {p.value}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Related rooms — carousel */}
+                <div style={{ marginTop: "3rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.2rem" }}>
+                    <h3 style={{ fontFamily: "var(--font-label)", fontSize: "0.62rem", letterSpacing: "0.3em", color: "var(--gold)", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+                      You May Also Like
+                    </h3>
+                    <div style={{ flex: 1, height: "1px", background: "rgba(201,169,110,0.25)" }} />
+                    <div style={{ display: "flex", gap: "0.4rem" }}>
+                      <button
+                        onClick={() => setRelatedIndex(Math.max(0, relatedIndex - 1))}
+                        style={{ width: "30px", height: "30px", borderRadius: "50%", border: "1px solid rgba(201,169,110,0.3)", background: "transparent", color: "var(--gold)", cursor: "pointer", fontSize: "0.8rem", display: "flex", alignItems: "center", justifyContent: "center" }}
+                      >←</button>
+                      <button
+                        onClick={() => setRelatedIndex(Math.min(relatedRooms.length - 2, relatedIndex + 1))}
+                        style={{ width: "30px", height: "30px", borderRadius: "50%", border: "1px solid rgba(201,169,110,0.3)", background: "transparent", color: "var(--gold)", cursor: "pointer", fontSize: "0.8rem", display: "flex", alignItems: "center", justifyContent: "center" }}
+                      >→</button>
+                    </div>
+                  </div>
+                  <div style={{ overflow: "hidden" }}>
+                    <div style={{ display: "flex", gap: "1rem", transition: "transform 0.4s ease", transform: `translateX(-${relatedIndex * 50}%)` }}>
+                      {relatedRooms.map((r) => (
+                        <Link key={r.id} href={`/rooms/${r.id}`} style={{ textDecoration: "none", flex: "0 0 calc(50% - 0.5rem)", minWidth: "0" }}>
+                          <div
+                            style={{ borderRadius: "4px", overflow: "hidden", border: "1px solid #f0ead8", transition: "all 0.3s", background: "#fff" }}
+                            onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = "rgba(201,169,110,0.4)"; el.style.transform = "translateY(-3px)"; el.style.boxShadow = "0 8px 30px rgba(26,22,18,0.1)"; }}
+                            onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = "#f0ead8"; el.style.transform = "translateY(0)"; el.style.boxShadow = "none"; }}
+                          >
+                            <div style={{ height: "90px", background: r.gradient }} />
+                            <div style={{ padding: "0.8rem" }}>
+                              <div style={{ fontFamily: "var(--font-display)", fontSize: "0.9rem", color: "var(--dark)", marginBottom: "0.2rem", lineHeight: 1.2 }}>{r.name}</div>
+                              <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.75rem", color: "var(--gold)", fontWeight: 600 }}>{"₹"}{r.price.toLocaleString("en-IN")} / night</div>
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Guests selector */}
-                <div style={{ marginBottom: "1.2rem", position: "relative" }}>
-                  <div style={{ fontFamily: "var(--font-label)", fontSize: "0.55rem", letterSpacing: "0.3em", color: "var(--text-muted)", marginBottom: "0.8rem" }}>GUESTS</div>
-                  <button
-                    onClick={() => setShowGuestPicker(!showGuestPicker)}
-                    style={{ width: "100%", padding: "0.8rem 1rem", background: "var(--cream)", border: "1px solid #e8e2da", borderRadius: "3px", color: "var(--text)", fontFamily: "var(--font-ui)", fontSize: "0.85rem", outline: "none", cursor: "pointer", textAlign: "left", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-                  >
-                    <span>{guestSummary}</span>
-                    <span style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>{showGuestPicker ? "▲" : "▼"}</span>
-                  </button>
+              {/* RIGHT — Booking Card */}
+              <div
+                style={{
+                  position: "sticky",
+                  top: "calc(var(--nav-h) + 1rem)",
+                  background: "#fff",
+                  border: "1px solid rgba(201,169,110,0.2)",
+                  borderRadius: "6px",
+                  overflow: "visible",
+                  boxShadow: "0 20px 60px rgba(26,22,18,0.12)",
+                }}
+              >
+                {/* Dark price header */}
+                <div style={{ padding: "1.5rem 1.8rem", borderBottom: "1px solid rgba(201,169,110,0.15)", textAlign: "center", background: "var(--dark)", borderRadius: "6px 6px 0 0" }}>
+                  <div style={{ fontFamily: "var(--font-label)", fontSize: "0.52rem", letterSpacing: "0.35em", color: "rgba(255,255,255,0.4)", marginBottom: "0.4rem" }}>
+                    STARTING FROM
+                  </div>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: "2.4rem", fontWeight: 400, color: "#fff", lineHeight: 1 }}>
+                    {"₹"}{room.price?.toLocaleString("en-IN")}
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "0.9rem", fontStyle: "italic", color: "rgba(255,255,255,0.4)", fontWeight: 300 }}> per night</span>
+                  </div>
+                </div>
 
-                  {showGuestPicker && (
-                    <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, background: "var(--dark)", border: "1px solid rgba(201,169,110,0.2)", borderRadius: "4px", padding: "1.2rem", zIndex: 100, boxShadow: "0 12px 40px rgba(0,0,0,0.2)" }}>
-                      {/* Adults */}
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                        <div>
-                          <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.85rem", color: "#fff", fontWeight: 500 }}>Adults</div>
-                          <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.7rem", color: "rgba(255,255,255,0.4)" }}>Age 18+</div>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
-                          <button onClick={() => setAdults(Math.max(1, adults - 1))} style={{ width: "28px", height: "28px", borderRadius: "50%", border: "1px solid rgba(201,169,110,0.3)", background: "transparent", color: "var(--gold)", cursor: "pointer", fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}>−</button>
-                          <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.95rem", color: "#fff", minWidth: "20px", textAlign: "center" }}>{adults}</span>
-                          <button onClick={() => setAdults(Math.min(room.guests || 6, adults + 1))} style={{ width: "28px", height: "28px", borderRadius: "50%", border: "1px solid rgba(201,169,110,0.3)", background: "transparent", color: "var(--gold)", cursor: "pointer", fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
-                        </div>
+                {/* Form */}
+                <div style={{ padding: "1.5rem" }}>
+                  {/* Dates */}
+                  <div style={{ marginBottom: "1rem" }}>
+                    <div style={{ fontFamily: "var(--font-label)", fontSize: "0.52rem", letterSpacing: "0.3em", color: "var(--text-muted)", marginBottom: "0.6rem" }}>DATES</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.6rem" }}>
+                      <div>
+                        <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.6rem", color: "var(--text-muted)", marginBottom: "0.3rem" }}>Check-in</div>
+                        <input type="date" value={checkIn} min={today} onChange={(e) => setCheckIn(e.target.value)} style={{ width: "100%", padding: "0.6rem 0.7rem", background: "var(--cream)", border: "1px solid #e8e2da", borderRadius: "3px", color: "var(--text)", fontFamily: "var(--font-ui)", fontSize: "0.78rem", outline: "none" }} />
                       </div>
-
-                      {/* Children */}
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                        <div>
-                          <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.85rem", color: "#fff", fontWeight: 500 }}>Children</div>
-                          <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.7rem", color: "rgba(255,255,255,0.4)" }}>Age 0-17</div>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
-                          <button onClick={() => { const n = Math.max(0, children - 1); setChildren(n); setChildrenAges(childrenAges.slice(0, n)); }} style={{ width: "28px", height: "28px", borderRadius: "50%", border: "1px solid rgba(201,169,110,0.3)", background: "transparent", color: "var(--gold)", cursor: "pointer", fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}>−</button>
-                          <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.95rem", color: "#fff", minWidth: "20px", textAlign: "center" }}>{children}</span>
-                          <button onClick={() => { const n = Math.min(4, children + 1); setChildren(n); setChildrenAges([...childrenAges, "Age"]); }} style={{ width: "28px", height: "28px", borderRadius: "50%", border: "1px solid rgba(201,169,110,0.3)", background: "transparent", color: "var(--gold)", cursor: "pointer", fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
-                        </div>
+                      <div>
+                        <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.6rem", color: "var(--text-muted)", marginBottom: "0.3rem" }}>Check-out</div>
+                        <input type="date" value={checkOut} min={checkIn} onChange={(e) => setCheckOut(e.target.value)} style={{ width: "100%", padding: "0.6rem 0.7rem", background: "var(--cream)", border: "1px solid #e8e2da", borderRadius: "3px", color: "var(--text)", fontFamily: "var(--font-ui)", fontSize: "0.78rem", outline: "none" }} />
                       </div>
+                    </div>
+                  </div>
 
-                      {/* Children ages */}
-                      {children > 0 && (
-                        <div style={{ marginBottom: "1rem" }}>
-                          <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.72rem", color: "rgba(255,255,255,0.5)", marginBottom: "0.6rem" }}>Children&apos;s Ages</div>
-                          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-                            {childrenAges.map((age, i) => (
-                              <select key={i} value={age} onChange={(e) => { const u = [...childrenAges]; u[i] = e.target.value; setChildrenAges(u); }} style={{ padding: "0.4rem 0.6rem", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(201,169,110,0.2)", borderRadius: "3px", color: "#fff", fontFamily: "var(--font-ui)", fontSize: "0.78rem", outline: "none", cursor: "pointer" }}>
-                                <option value="Age">Age</option>
-                                {Array.from({ length: 18 }, (_, j) => (
-                                  <option key={j} value={j} style={{ background: "#1a1612" }}>{j === 0 ? "Under 1" : j}</option>
-                                ))}
-                              </select>
-                            ))}
+                  {/* Guests */}
+                  <div style={{ marginBottom: "1rem", position: "relative" }}>
+                    <div style={{ fontFamily: "var(--font-label)", fontSize: "0.52rem", letterSpacing: "0.3em", color: "var(--text-muted)", marginBottom: "0.6rem" }}>GUESTS</div>
+                    <button
+                      onClick={() => setShowGuestPicker(!showGuestPicker)}
+                      style={{ width: "100%", padding: "0.7rem 0.9rem", background: "var(--cream)", border: "1px solid #e8e2da", borderRadius: "3px", color: "var(--text)", fontFamily: "var(--font-ui)", fontSize: "0.82rem", outline: "none", cursor: "pointer", textAlign: "left", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                    >
+                      <span>{guestSummary}</span>
+                      <span style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>{showGuestPicker ? "▲" : "▼"}</span>
+                    </button>
+
+                    {showGuestPicker && (
+                      <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, background: "var(--dark)", border: "1px solid rgba(201,169,110,0.2)", borderRadius: "4px", padding: "1rem", zIndex: 100, boxShadow: "0 12px 40px rgba(0,0,0,0.3)" }}>
+                        {/* Adults */}
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.8rem" }}>
+                          <div>
+                            <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.82rem", color: "#fff", fontWeight: 500 }}>Adults</div>
+                            <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}>Age 18+</div>
                           </div>
-                          <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.68rem", color: "rgba(255,255,255,0.35)", marginTop: "0.5rem" }}>
-                            Children above 5 years require a bed
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
+                            <button onClick={() => setAdults(Math.max(1, adults - 1))} style={{ width: "26px", height: "26px", borderRadius: "50%", border: "1px solid rgba(201,169,110,0.3)", background: "transparent", color: "var(--gold)", cursor: "pointer", fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}>−</button>
+                            <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.9rem", color: "#fff", minWidth: "18px", textAlign: "center" }}>{adults}</span>
+                            <button onClick={() => setAdults(Math.min(room.guests || 6, adults + 1))} style={{ width: "26px", height: "26px", borderRadius: "50%", border: "1px solid rgba(201,169,110,0.3)", background: "transparent", color: "var(--gold)", cursor: "pointer", fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
                           </div>
                         </div>
-                      )}
 
-                      <button onClick={() => setShowGuestPicker(false)} style={{ width: "100%", padding: "0.75rem", background: "var(--gold)", color: "#0a0c0f", border: "none", borderRadius: "3px", fontFamily: "var(--font-label)", fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.25em", textTransform: "uppercase", cursor: "pointer" }}>
-                        Done
-                      </button>
+                        {/* Children */}
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.8rem" }}>
+                          <div>
+                            <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.82rem", color: "#fff", fontWeight: 500 }}>Children</div>
+                            <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}>Age 0-17</div>
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
+                            <button onClick={() => { const n = Math.max(0, children - 1); setChildren(n); setChildrenAges(childrenAges.slice(0, n)); }} style={{ width: "26px", height: "26px", borderRadius: "50%", border: "1px solid rgba(201,169,110,0.3)", background: "transparent", color: "var(--gold)", cursor: "pointer", fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}>−</button>
+                            <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.9rem", color: "#fff", minWidth: "18px", textAlign: "center" }}>{children}</span>
+                            <button onClick={() => { const n = Math.min(4, children + 1); setChildren(n); setChildrenAges([...childrenAges, "Age"]); }} style={{ width: "26px", height: "26px", borderRadius: "50%", border: "1px solid rgba(201,169,110,0.3)", background: "transparent", color: "var(--gold)", cursor: "pointer", fontSize: "1rem", display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
+                          </div>
+                        </div>
+
+                        {children > 0 && (
+                          <div style={{ marginBottom: "0.8rem" }}>
+                            <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.68rem", color: "rgba(255,255,255,0.5)", marginBottom: "0.5rem" }}>Children&apos;s Ages</div>
+                            <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+                              {childrenAges.map((age, i) => (
+                                <select key={i} value={age} onChange={(e) => { const u = [...childrenAges]; u[i] = e.target.value; setChildrenAges(u); }} style={{ padding: "0.35rem 0.5rem", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(201,169,110,0.2)", borderRadius: "3px", color: "#fff", fontFamily: "var(--font-ui)", fontSize: "0.75rem", outline: "none" }}>
+                                  <option value="Age">Age</option>
+                                  {Array.from({ length: 18 }, (_, j) => (
+                                    <option key={j} value={j} style={{ background: "#1a1612" }}>{j === 0 ? "Under 1" : j}</option>
+                                  ))}
+                                </select>
+                              ))}
+                            </div>
+                            <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.65rem", color: "rgba(255,255,255,0.3)", marginTop: "0.4rem" }}>
+                              Children above 5 years require a bed
+                            </div>
+                          </div>
+                        )}
+
+                        <button onClick={() => setShowGuestPicker(false)} style={{ width: "100%", padding: "0.7rem", background: "var(--gold)", color: "#0a0c0f", border: "none", borderRadius: "3px", fontFamily: "var(--font-label)", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.22em", textTransform: "uppercase", cursor: "pointer" }}>
+                          Done
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Availability badge */}
+                  {availabilityChecked && (
+                    <div style={{ marginBottom: "1rem", padding: "0.8rem", background: "rgba(34,139,34,0.08)", border: "1px solid rgba(34,139,34,0.25)", borderRadius: "3px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <span style={{ color: "#4caf50" }}>✓</span>
+                        <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.8rem", color: "#4caf50", fontWeight: 600 }}>4 room(s) available</span>
+                      </div>
                     </div>
                   )}
-                </div>
 
-                {/* Availability badge */}
-                {availabilityChecked && (
-                  <div style={{ marginBottom: "1.2rem", padding: "1rem", background: "rgba(34,139,34,0.08)", border: "1px solid rgba(34,139,34,0.25)", borderRadius: "3px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.3rem" }}>
-                      <span style={{ color: "#4caf50", fontSize: "0.9rem" }}>✓</span>
-                      <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.82rem", color: "#4caf50", fontWeight: 600 }}>Available</span>
+                  {/* Price breakdown */}
+                  {nights > 0 && (
+                    <div style={{ marginBottom: "1rem", padding: "0.9rem", background: "var(--cream)", borderRadius: "3px", border: "1px solid #f0ead8" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-ui)", marginBottom: "0.3rem" }}>
+                        <span>1 x {room.name} · {nights} night{nights > 1 ? "s" : ""}</span>
+                        <span>{"₹"}{total.toLocaleString("en-IN")}</span>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-ui)", marginBottom: "0.3rem" }}>
+                        <span>Taxes (12%) + Service fee</span>
+                        <span>{"₹"}{tax.toLocaleString("en-IN")}</span>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.88rem", fontFamily: "var(--font-ui)", fontWeight: 700, borderTop: "1px solid #e8e2da", paddingTop: "0.4rem", marginTop: "0.4rem" }}>
+                        <span style={{ color: "var(--text)" }}>Total</span>
+                        <span style={{ color: "var(--gold)" }}>{"₹"}{(total + tax).toLocaleString("en-IN")}</span>
+                      </div>
                     </div>
-                    <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.72rem", color: "var(--text-muted)" }}>4 room(s) available for your dates</div>
+                  )}
+
+                  {/* Reserve */}
+                  <button
+                    onClick={() => setShowBooking(true)}
+                    style={{ width: "100%", padding: "0.9rem", background: "var(--gold)", color: "#0a0c0f", border: "none", borderRadius: "3px", fontFamily: "var(--font-label)", fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.22em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.3s", marginBottom: "0.6rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "var(--gold-light)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "var(--gold)"; }}
+                  >
+                    Reserve Now
+                  </button>
+
+                  {/* Check availability */}
+                  <button
+                    onClick={() => { setAvailabilityChecked(false); setShowAvailability(true); }}
+                    style={{ width: "100%", padding: "0.8rem", background: "transparent", color: "var(--text-muted)", border: "1px solid #e8e2da", borderRadius: "3px", fontFamily: "var(--font-label)", fontSize: "0.58rem", letterSpacing: "0.22em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.3s", marginBottom: "0.8rem" }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "var(--gold)"; (e.currentTarget as HTMLElement).style.color = "var(--gold)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "#e8e2da"; (e.currentTarget as HTMLElement).style.color = "var(--text-muted)"; }}
+                  >
+                    Check Availability
+                  </button>
+
+                  <p style={{ textAlign: "center", fontFamily: "var(--font-body)", fontSize: "0.78rem", fontStyle: "italic", color: "var(--text-muted)", marginBottom: "1rem" }}>
+                    No charge until confirmation
+                  </p>
+
+                  {/* Need assistance */}
+                  <div
+                    onClick={() => setShowAssistance(true)}
+                    style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.9rem", background: "var(--cream)", borderRadius: "3px", border: "1px solid #f0ead8", cursor: "pointer" }}
+                  >
+                    <div>
+                      <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.82rem", fontWeight: 600, color: "var(--dark)", marginBottom: "1px" }}>Need assistance?</div>
+                      <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.68rem", color: "var(--text-muted)" }}>24/7 Concierge</div>
+                    </div>
+                    <span style={{ fontFamily: "var(--font-label)", fontSize: "0.55rem", letterSpacing: "0.18em", padding: "0.5rem 0.8rem", border: "1px solid rgba(201,169,110,0.3)", borderRadius: "2px", color: "var(--gold)" }}>
+                      Contact
+                    </span>
                   </div>
-                )}
-
-                {/* Price breakdown */}
-                {nights > 0 && (
-                  <div style={{ marginBottom: "1.2rem", padding: "1rem", background: "var(--cream)", borderRadius: "3px", border: "1px solid #f0ead8" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem", color: "var(--text-muted)", fontFamily: "var(--font-ui)", marginBottom: "0.4rem" }}>
-                      <span>1 x {room.name} · {nights} night{nights > 1 ? "s" : ""}</span>
-                      <span>{"₹"}{total.toLocaleString("en-IN")}</span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem", color: "var(--text-muted)", fontFamily: "var(--font-ui)", marginBottom: "0.4rem" }}>
-                      <span>Taxes (12%) + Service fee</span>
-                      <span>{"₹"}{tax.toLocaleString("en-IN")}</span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.92rem", fontFamily: "var(--font-ui)", fontWeight: 700, borderTop: "1px solid #e8e2da", paddingTop: "0.5rem", marginTop: "0.5rem" }}>
-                      <span style={{ color: "var(--text)" }}>Total</span>
-                      <span style={{ color: "var(--gold)", fontSize: "1.1rem" }}>{"₹"}{(total + tax).toLocaleString("en-IN")}</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Reserve button */}
-                <button
-                  onClick={() => setShowBooking(true)}
-                  style={{ width: "100%", padding: "1rem", background: "var(--gold)", color: "#0a0c0f", border: "none", borderRadius: "3px", fontFamily: "var(--font-label)", fontSize: "0.65rem", fontWeight: 600, letterSpacing: "0.25em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.3s", marginBottom: "0.8rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "var(--gold-light)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "var(--gold)"; }}
-                >
-                  Reserve Now
-                </button>
-
-                {/* Check availability */}
-                <button
-                  onClick={() => { setAvailabilityChecked(false); setShowAvailability(true); }}
-                  style={{ width: "100%", padding: "0.9rem", background: "transparent", color: "var(--text-muted)", border: "1px solid #e8e2da", borderRadius: "3px", fontFamily: "var(--font-label)", fontSize: "0.6rem", letterSpacing: "0.25em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.3s", marginBottom: "1.2rem" }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "var(--gold)"; (e.currentTarget as HTMLElement).style.color = "var(--gold)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "#e8e2da"; (e.currentTarget as HTMLElement).style.color = "var(--text-muted)"; }}
-                >
-                  Check Availability
-                </button>
-
-                <p style={{ textAlign: "center", fontFamily: "var(--font-body)", fontSize: "0.82rem", fontStyle: "italic", color: "var(--text-muted)" }}>
-                  No charge until confirmation
-                </p>
-
-                {/* Need assistance */}
-                <div
-                  onClick={() => setShowAssistance(true)}
-                  style={{ marginTop: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem", background: "var(--cream)", borderRadius: "3px", border: "1px solid #f0ead8", cursor: "pointer" }}
-                >
-                  <div>
-                    <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.85rem", fontWeight: 600, color: "var(--dark)", marginBottom: "2px" }}>Need assistance?</div>
-                    <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.72rem", color: "var(--text-muted)" }}>24/7 Concierge</div>
-                  </div>
-                  <span style={{ fontFamily: "var(--font-label)", fontSize: "0.58rem", letterSpacing: "0.2em", padding: "0.6rem 1rem", border: "1px solid rgba(201,169,110,0.3)", borderRadius: "2px", color: "var(--gold)" }}>
-                    Contact
-                  </span>
                 </div>
               </div>
             </div>
@@ -578,7 +599,7 @@ export default function RoomDetailPage({
                     <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.85rem", color: item.label === "Total" ? "var(--gold)" : "#fff", fontWeight: item.label === "Total" ? 600 : 400 }}>{item.value}</span>
                   </div>
                 ))}
-                <button onClick={() => { setShowAvailability(false); setShowBooking(true); }} style={{ width: "100%", padding: "1rem", background: "var(--gold)", color: "#0a0c0f", border: "none", borderRadius: "3px", fontFamily: "var(--font-label)", fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.25em", textTransform: "uppercase", cursor: "pointer", marginTop: "1.5rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
+                <button onClick={() => { setShowAvailability(false); setShowBooking(true); }} style={{ width: "100%", padding: "0.9rem", background: "var(--gold)", color: "#0a0c0f", border: "none", borderRadius: "3px", fontFamily: "var(--font-label)", fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.22em", textTransform: "uppercase", cursor: "pointer", marginTop: "1.5rem" }}>
                   Proceed to Reservation
                 </button>
               </div>

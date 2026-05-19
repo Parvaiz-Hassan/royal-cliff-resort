@@ -44,213 +44,12 @@ body {
   background: var(--cream);
   color: var(--text);
   overflow-x: hidden;
+  width: 100%;
 }
 
 a { text-decoration: none; color: inherit; }
 ul { list-style: none; }
 
-/* ═══════════════════════════════════════════════════════
-   MOBILE RESPONSIVE FIXES
-   ═══════════════════════════════════════════════════════ */
-
-/* Prevent horizontal scroll */
-html, body {
-  overflow-x: hidden;
-  width: 100%;
-}
-
-/* Fix booking bar overflow */
-@media (max-width: 768px) {
-  /* Navbar */
-  .nav-desktop { display: none !important; }
-  .nav-book-btn { display: none !important; }
-
-  /* Booking bar */
-  .booking-bar-inner {
-    flex-direction: column !important;
-  }
-
-  /* Stats strip */
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  /* About section */
-  .about-grid {
-    grid-template-columns: 1fr !important;
-    gap: 2rem !important;
-  }
-
-  /* Floating card fix */
-  .floating-card {
-    position: relative !important;
-    bottom: auto !important;
-    right: auto !important;
-    margin-top: 1rem !important;
-  }
-
-  /* Rooms grid */
- /* Rooms grid */
-  .rooms-grid-container {
-    grid-template-columns: 1fr !important;
-  }
-/* Room detail page */
-  .room-detail-grid {
-    grid-template-columns: 1fr !important;
-    padding: 1.5rem 1rem 4rem !important;
-  }
-
-  /* Room hero text */
-  .room-hero-text {
-    left: 1.5rem !important;
-    bottom: 1.5rem !important;
-  }
-
-  /* Room hero thumbnails */
-  .room-thumbnails {
-    right: 0.5rem !important;
-    bottom: 0.5rem !important;
-    gap: 0.3rem !important;
-  }
-
-  .room-thumbnails button {
-    width: 48px !important;
-    height: 36px !important;
-    fontSize: 0.4rem !important;
-  }
-
-  /* Booking card on mobile */
-  .room-booking-card {
-    position: static !important;
-    margin-top: 2rem !important;
-  }
-
-  /* Highlights grid */
-  .highlights-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Related rooms */
-  .related-rooms-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-}
-
-@media (max-width: 1024px) {
-  .rooms-grid-container {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .rooms-grid-container {
-    grid-template-columns: 1fr !important;
-  }
-
-  .about-grid {
-    grid-template-columns: 1fr !important;
-    gap: 3rem !important;
-  }
-
-  .about-grid > div {
-    padding: 0 0.5rem !important;
-  }
-
-.book-direct-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-  .book-direct-label {
-    display: none !important;
-  }
-
-  /* Features grid */
-  .features-grid-container {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Experiences grid */
-  .experiences-grid-container {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Gallery grid */
-  .gallery-grid-container {
-    grid-template-columns: 1fr 1fr !important;
-    grid-template-rows: auto !important;
-  }
-  .gallery-grid-container > div {
-    grid-column: auto !important;
-    grid-row: auto !important;
-    aspect-ratio: 1 !important;
-  }
-
-  /* Testimonials */
-  .testimonial-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .testimonial-image {
-    display: none !important;
-  }
-
-  /* Contact grid */
-  .contact-grid-container {
-    grid-template-columns: 1fr !important;
-    gap: 2rem !important;
-  }
-
-  /* Footer grid */
-  .footer-grid-container {
-    grid-template-columns: 1fr !important;
-    gap: 2rem !important;
-  }
-
-  /* Room detail */
-  .room-detail-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Booking modal */
-  .booking-modal-inner {
-    padding: 1.2rem !important;
-  }
-
-  /* Hero buttons */
-  .hero-actions {
-    flex-direction: column !important;
-    align-items: center !important;
-  }
-
-  /* Section padding */
-  .section-padding {
-    padding: 60px 0 !important;
-  }
-
-  /* Hide scroll hint on mobile */
-  .scroll-hint {
-    display: none !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .stats-grid {
-    grid-template-columns: 1fr 1fr !important;
-  }
-
-  .form-row-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .modal-steps-grid {
-    font-size: 0.55rem !important;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════
-   COMING SOON STYLE POLISH
-   ═══════════════════════════════════════════════════════ */
-
-/* Cinzel labels */
 @layer base {
   .btn-gold {
     display: inline-flex;
@@ -342,58 +141,114 @@ html, body {
   }
 }
 
-/* Navbar border */
-.nav-scrolled-border {
-  border-bottom: 1px solid rgba(201,169,110,0.15);
+/* ── Mobile Responsive ── */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
 }
 
-/* Card hover */
-.card-hover {
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
-}
-.card-hover:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 60px rgba(10,12,15,0.18);
-}
-
-/* Section fade animation */
-.fade-up {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.fade-up.visible {
-  opacity: 1;
-  transform: translateY(0);
+@media (max-width: 1024px) {
+  .rooms-grid-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .features-grid-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
 
-/* Ornament line */
-.ornament {
-  width: 120px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  margin: 0 auto 2rem;
+@media (max-width: 768px) {
+  .nav-desktop { display: none !important; }
+  .nav-book-btn { display: none !important; }
+
+  .booking-bar-inner {
+    flex-direction: column !important;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr !important;
+    gap: 3rem !important;
+  }
+
+  .about-grid > div {
+    padding: 0 0.5rem !important;
+  }
+
+  .floating-card {
+    position: relative !important;
+    bottom: auto !important;
+    right: auto !important;
+    margin-top: 1rem !important;
+  }
+
+  .rooms-grid-container {
+    grid-template-columns: 1fr !important;
+  }
+
+  .features-grid-container {
+    grid-template-columns: 1fr !important;
+  }
+
+  .experiences-grid-container {
+    grid-template-columns: 1fr !important;
+  }
+
+  .gallery-grid-container {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: auto !important;
+  }
+  .gallery-grid-container > div {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    aspect-ratio: 1 !important;
+  }
+
+  .testimonial-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .testimonial-image {
+    display: none !important;
+  }
+
+  .contact-grid-container {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+
+  .footer-grid-container {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+
+  .room-detail-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .hero-actions {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .scroll-hint {
+    display: none !important;
+  }
+
+  .book-direct-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  .book-direct-label {
+    display: none !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
 
-/* Dark section */
-.section-dark {
-  background: var(--dark);
-  color: #fff;
-}
-
-/* Noise grain overlay for dark sections */
-.grain::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity: 0.3;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Scroll animations observer */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to   { opacity: 1; transform: translateY(0); }
+@media (max-width: 480px) {
+  .form-row-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .book-direct-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
