@@ -13,7 +13,13 @@ export default function AboutPage() {
       <div
         style={{
           height: "60vh",
-          background: "linear-gradient(135deg, #0a0c0f 0%, #1a1a2a 50%, #0a0c0f 100%)",
+          backgroundImage:
+          
+      "url('https://res.cloudinary.com/dhnglltpo/image/upload/v1779257808/royal-cliff-resort-about-page-header-banner_ms8gol.webp')",
+
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -48,15 +54,16 @@ export default function AboutPage() {
         <div style={{ maxWidth: "1240px", margin: "0 auto", padding: "0 2rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6rem", alignItems: "center" }} className="about-grid">
           {/* Image */}
           <div style={{ position: "relative" }}>
-            <div style={{ width: "100%", aspectRatio: "4/5", background: "linear-gradient(135deg, #1a2a3a 0%, #2d4a5a 60%, #3a5a6a 100%)", borderRadius: "4px", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <svg viewBox="0 0 400 500" style={{ width: "70%", opacity: 0.15 }}>
-                <polygon points="200,30 320,220 80,220" fill="white" />
-                <polygon points="60,100 200,220 0,220" fill="rgba(255,255,255,0.5)" />
-                <polygon points="300,80 400,220 200,220" fill="rgba(255,255,255,0.4)" />
-                <rect x="0" y="220" width="400" height="280" fill="rgba(255,255,255,0.08)" />
-                <circle cx="340" cy="60" r="30" fill="rgba(255,220,100,0.3)" />
-              </svg>
-            </div>
+            <img
+    src="https://res.cloudinary.com/dhnglltpo/image/upload/v1779259859/royal-cliff-resort-about-us-poster_bqoxfc.jpg"
+    alt="Royal Cliff Resort Pahalgam"
+    style={{
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      display: "block",
+    }}
+  />
             {/* Floating stat */}
             <div style={{ position: "absolute", bottom: "-2rem", right: "-2rem", background: "#fff", padding: "1.5rem 2rem", borderRadius: "4px", boxShadow: "0 20px 60px rgba(0,0,0,0.12)", minWidth: "180px", border: "1px solid rgba(201,169,110,0.2)" }}>
               <div style={{ fontFamily: "var(--font-display)", fontSize: "2.2rem", color: "var(--gold)", fontWeight: 400 }}>2025</div>
@@ -135,7 +142,7 @@ export default function AboutPage() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "center" }} className="about-grid">
             <div>
               {[
-                { label: "Address", value: "Near BP Road, Pahalgam, Jammu & Kashmir — 192125" },
+                { label: "Address", value: "Near BP Road, Dalseer, Pahalgam, Jammu & Kashmir — 192125" },
                 { label: "Phone & WhatsApp", value: "+91 96222 99302" },
                 { label: "Email", value: "contact@royalcliffresort.com" },
                 { label: "Altitude", value: "7,800 feet above sea level" },
@@ -152,7 +159,7 @@ export default function AboutPage() {
             {/* Map */}
             <div style={{ borderRadius: "6px", overflow: "hidden", border: "1px solid rgba(201,169,110,0.2)", boxShadow: "0 20px 60px rgba(26,22,18,0.1)" }}>
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3305.0!2d75.3162!3d34.0161!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzTCsDAzJzA1LjgiTiA3NcKwMTgnNTguMyJF!5e0!3m2!1sen!2sin!4v1234567890"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2376.1034882784124!2d75.2628125!3d33.892666999999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38e2153ec89d18a7%3A0x49c0f01f46d561ff!2sRoyal%20Cliff%20Resort!5e1!3m2!1sen!2sin!4v1779261524318!5m2!1sen!2sin"
                 width="100%"
                 height="380"
                 style={{ border: 0, display: "block" }}

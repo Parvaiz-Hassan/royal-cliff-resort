@@ -24,8 +24,11 @@ export default function About() {
             style={{
               width: "100%",
               aspectRatio: "4/5",
-              background:
-                "linear-gradient(135deg, #1a2a3a 0%, #2d4a5a 60%, #3a5a6a 100%)",
+              backgroundImage:
+        "url('https://res.cloudinary.com/dhnglltpo/image/upload/v1779265055/royal-cliff-resort-about-us-poster-2_abheh3.jpg')",
+        backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
               borderRadius: "6px",
               display: "flex",
               alignItems: "center",

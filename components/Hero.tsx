@@ -28,7 +28,7 @@ const slides = [
   {
     id: 4,
     type: "video" as const,
-    videoUrl: "/videos/hero-video.mp4",
+    videoUrl: "/videos/pahalgam-video.mp4",
     label: "Resort Video",
     gradient: "linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 50%, #0a2010 100%)",
   },
