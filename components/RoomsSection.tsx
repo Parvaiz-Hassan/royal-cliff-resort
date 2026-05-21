@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import RoomCard from "./RoomCard";
-import { rooms, Room } from "@/lib/rooms";
+import { rooms as staticRooms, Room } from "@/lib/rooms";
+import { client, urlFor } from "@/lib/sanity";
+import { roomsQuery } from "@/lib/queries";
 
 interface RoomsSectionProps {
   onBook: (room: Room) => void;
@@ -12,25 +14,48 @@ interface RoomsSectionProps {
 export default function RoomsSection({ onBook }: RoomsSectionProps) {
   const [view, setView] = useState<"grid" | "carousel">("grid");
   const [carouselIndex, setCarouselIndex] = useState(0);
+  const [sanityRooms, setSanityRooms] = useState<Room[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const visibleRooms = rooms.slice(0, 3);
+  useEffect(() => {
+    client
+      .fetch(roomsQuery)
+      .then((data: any[]) => {
+        if (data?.length > 0) {
+          const mapped: Room[] = data.map((r) => ({
+            id: r.slug || r._id,
+            name: r.name,
+            description: r.description || "",
+            price: r.price || 0,
+            size: r.size || "",
+            guests: r.maxGuests || 2,
+            view: r.view || "",
+            tag: r.tag || "",
+            amenities: r.amenities || [],
+            gradient: "linear-gradient(135deg, #1a2a3a, #2a4a5a)",
+            image: r.images?.[0] ? urlFor(r.images[0]).width(800).url() : null,
+          }));
+          setSanityRooms(mapped);
+        }
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
-  const prevSlide = () => {
-    setCarouselIndex((prev) => (prev === 0 ? rooms.length - 1 : prev - 1));
-  };
+  // Use Sanity rooms if available, fall back to static
+  const allRooms = sanityRooms.length > 0 ? sanityRooms : staticRooms;
+  const visibleRooms = allRooms.slice(0, 3);
 
-  const nextSlide = () => {
-    setCarouselIndex((prev) => (prev === rooms.length - 1 ? 0 : prev + 1));
-  };
+  const prevSlide = () =>
+    setCarouselIndex((prev) => (prev === 0 ? allRooms.length - 1 : prev - 1));
+
+  const nextSlide = () =>
+    setCarouselIndex((prev) => (prev === allRooms.length - 1 ? 0 : prev + 1));
 
   return (
-    <section
-      id="rooms"
-      style={{ background: "#faf7f2", padding: "100px 0" }}
-    >
-      <div
-        style={{ maxWidth: "1240px", margin: "0 auto", padding: "0 2rem" }}
-      >
+    <section id="rooms" style={{ background: "#faf7f2", padding: "100px 0" }}>
+      <div style={{ maxWidth: "1240px", margin: "0 auto", padding: "0 2rem" }}>
+
         {/* Header */}
         <div
           style={{
@@ -83,7 +108,6 @@ export default function RoomsSection({ onBook }: RoomsSectionProps) {
 
           {/* Controls */}
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            {/* View toggle */}
             <div style={{ display: "flex", gap: "0.4rem" }}>
               {(["grid", "carousel"] as const).map((v) => (
                 <button
@@ -120,23 +144,40 @@ export default function RoomsSection({ onBook }: RoomsSectionProps) {
                 </button>
               ))}
             </div>
-
             <Link href="/rooms" className="btn-gold">
               View All
             </Link>
           </div>
         </div>
 
-        {/* Grid View */}
-        {view === "grid" && (
-          <div
-              className="rooms-grid-container"
+        {/* Loading state */}
+        {loading && (
+          <div style={{ textAlign: "center", padding: "4rem 0" }}>
+            <div
               style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: "2rem",
+                width: "36px",
+                height: "36px",
+                border: "2px solid rgba(201,169,110,0.2)",
+                borderTop: "2px solid var(--gold)",
+                borderRadius: "50%",
+                margin: "0 auto",
+                animation: "spin 1s linear infinite",
               }}
-            >
+            />
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+          </div>
+        )}
+
+        {/* Grid View */}
+        {!loading && view === "grid" && (
+          <div
+            className="rooms-grid-container"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "2rem",
+            }}
+          >
             {visibleRooms.map((room) => (
               <RoomCard key={room.id} room={room} onBook={onBook} />
             ))}
@@ -144,7 +185,7 @@ export default function RoomsSection({ onBook }: RoomsSectionProps) {
         )}
 
         {/* Carousel View */}
-        {view === "carousel" && (
+        {!loading && view === "carousel" && (
           <div style={{ position: "relative" }}>
             <div style={{ overflow: "hidden" }}>
               <div
@@ -154,77 +195,40 @@ export default function RoomsSection({ onBook }: RoomsSectionProps) {
                   transform: `translateX(-${carouselIndex * 100}%)`,
                 }}
               >
-                {rooms.map((room) => (
-                  <div
-                    key={room.id}
-                    style={{ flex: "0 0 100%", padding: "0 0.5rem" }}
-                  >
+                {allRooms.map((room) => (
+                  <div key={room.id} style={{ flex: "0 0 100%", padding: "0 0.5rem" }}>
                     <RoomCard room={room} onBook={onBook} />
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Prev */}
             <button
               onClick={prevSlide}
               style={{
-                position: "absolute",
-                top: "50%",
-                left: "-25px",
-                transform: "translateY(-50%)",
-                width: "50px",
-                height: "50px",
-                background: "#fff",
-                border: "none",
-                borderRadius: "50%",
-                boxShadow: "0 8px 40px rgba(26,22,18,0.12)",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "1.2rem",
-                color: "var(--dark)",
+                position: "absolute", top: "50%", left: "-25px",
+                transform: "translateY(-50%)", width: "50px", height: "50px",
+                background: "#fff", border: "none", borderRadius: "50%",
+                boxShadow: "0 8px 40px rgba(26,22,18,0.12)", cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: "1.2rem", color: "var(--dark)",
               }}
-            >
-              ←
-            </button>
+            >←</button>
 
-            {/* Next */}
             <button
               onClick={nextSlide}
               style={{
-                position: "absolute",
-                top: "50%",
-                right: "-25px",
-                transform: "translateY(-50%)",
-                width: "50px",
-                height: "50px",
-                background: "#fff",
-                border: "none",
-                borderRadius: "50%",
-                boxShadow: "0 8px 40px rgba(26,22,18,0.12)",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "1.2rem",
-                color: "var(--dark)",
+                position: "absolute", top: "50%", right: "-25px",
+                transform: "translateY(-50%)", width: "50px", height: "50px",
+                background: "#fff", border: "none", borderRadius: "50%",
+                boxShadow: "0 8px 40px rgba(26,22,18,0.12)", cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: "1.2rem", color: "var(--dark)",
               }}
-            >
-              →
-            </button>
+            >→</button>
 
-            {/* Dots */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: "8px",
-                marginTop: "2rem",
-              }}
-            >
-              {rooms.map((_, i) => (
+            <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginTop: "2rem" }}>
+              {allRooms.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCarouselIndex(i)}
@@ -233,10 +237,8 @@ export default function RoomsSection({ onBook }: RoomsSectionProps) {
                     height: "8px",
                     borderRadius: i === carouselIndex ? "4px" : "50%",
                     background: i === carouselIndex ? "var(--gold)" : "#d4af6a44",
-                    border: "none",
-                    cursor: "pointer",
-                    transition: "all 0.3s",
-                    padding: 0,
+                    border: "none", cursor: "pointer",
+                    transition: "all 0.3s", padding: 0,
                   }}
                 />
               ))}
