@@ -40,12 +40,6 @@ export default function RoomDetailPage({
   const [relatedIndex, setRelatedIndex] = useState(0);
 
   useEffect(() => {
-    const staticRoom = staticRooms.find((r) => r.id === slug);
-    if (staticRoom) {
-      setRoom(staticRoom);
-      setLoading(false);
-      return;
-    }
     client.fetch(roomBySlugQuery, { slug }).then((data) => {
       if (data) {
         setRoom({
@@ -53,7 +47,9 @@ export default function RoomDetailPage({
           id: data.slug,
           guests: data.maxGuests || 2,
           gradient: "linear-gradient(135deg, #1a2a3a, #2a4a5a)",
-          image: data.images?.[0] ? urlFor(data.images[0]).width(1200).url() : null,
+          // AFTER — keep raw images array AND build the first image
+images: data.images || [],
+image: data.images?.[0] ? urlFor(data.images[0]).width(1200).url() : null,
           amenities: data.amenities || [],
         });
       }
@@ -115,14 +111,37 @@ export default function RoomDetailPage({
 
   if (!room) return notFound();
 
-  const photos: { type: string; gradient: string; label: string; videoUrl?: string; image?: string }[] = [
-    { type: "image", gradient: room.gradient || "linear-gradient(135deg, #1a2a3a, #2a4a5a)", label: "Main View", image: room.image || undefined },
-    { type: "image", gradient: "linear-gradient(135deg, #111820, #1a2a35)", label: "Bedroom" },
-    { type: "image", gradient: "linear-gradient(135deg, #1a1008, #2a2010)", label: "Bathroom" },
-    { type: "image", gradient: "linear-gradient(135deg, #0a1020, #152030)", label: "Balcony" },
-    { type: "image", gradient: "linear-gradient(135deg, #100a18, #201530)", label: "View" },
-    { type: "video", gradient: "linear-gradient(135deg, #0a1a0a, #1a3a1a)", label: "Video", videoUrl: room.videoUrl || "/videos/room-placeholder.mp4" },
-  ];
+  // Build photos array from Sanity images array
+const sanityImages: { type: string; gradient: string; label: string; image?: string; videoUrl?: string }[] =
+  Array.isArray(room.images) && room.images.length > 0
+    ? room.images.map((img: any, i: number) => ({
+        type: "image",
+        gradient: room.gradient || "linear-gradient(135deg, #1a2a3a, #2a4a5a)",
+        label: ["Main View", "Bedroom", "Bathroom", "Balcony", "View"][i] || `Photo ${i + 1}`,
+        image: urlFor(img).width(1200).url(),
+      }))
+    : [
+        {
+          type: "image",
+          gradient: room.gradient || "linear-gradient(135deg, #1a2a3a, #2a4a5a)",
+          label: "Main View",
+          image: room.image || undefined,
+        },
+      ];
+
+const photos = [
+  ...sanityImages,
+  ...(room.videoUrl
+    ? [
+        {
+          type: "video",
+          gradient: "linear-gradient(135deg, #0a1a0a, #1a3a1a)",
+          label: "Video",
+          videoUrl: room.videoUrl,
+        },
+      ]
+    : []),
+];
 
   const relatedRooms = staticRooms.filter((r) => r.id !== slug);
 
