@@ -129,19 +129,14 @@ const sanityImages: { type: string; gradient: string; label: string; image?: str
         },
       ];
 
-const photos = [
-  ...sanityImages,
-  ...(room.videoUrl
-    ? [
-        {
-          type: "video",
-          gradient: "linear-gradient(135deg, #0a1a0a, #1a3a1a)",
-          label: "Video",
-          videoUrl: room.videoUrl,
-        },
-      ]
-    : []),
-];
+const photos: { type: string; gradient: string; label: string; videoUrl?: string; image?: string }[] = [
+    { type: "image", gradient: room.gradient || "linear-gradient(135deg, #1a2a3a, #2a4a5a)", label: "Main View", image: room.image || undefined },
+    { type: "image", gradient: "linear-gradient(135deg, #111820, #1a2a35)", label: "Bedroom" },
+    { type: "image", gradient: "linear-gradient(135deg, #1a1008, #2a2010)", label: "Bathroom" },
+    { type: "image", gradient: "linear-gradient(135deg, #0a1020, #152030)", label: "Balcony" },
+    { type: "image", gradient: "linear-gradient(135deg, #100a18, #201530)", label: "View" },
+    { type: "video", gradient: "linear-gradient(135deg, #0a1a0a, #1a3a1a)", label: "Video", videoUrl: room.videoUrl || "/videos/room-placeholder.mp4" },
+  ];
 
   const relatedRooms = staticRooms.filter((r) => r.id !== slug);
 
