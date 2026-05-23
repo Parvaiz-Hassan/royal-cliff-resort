@@ -1,12 +1,26 @@
 "use client";
 
-import { use } from "react";
+import { useState, useEffect, use } from "react";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import Link from "next/link";
-import { blogPosts } from "@/lib/blog";
+import { client, urlFor } from "@/lib/sanity";
+import { blogPostBySlugQuery, blogPostsQuery } from "@/lib/queries";
+
+interface BlogPost {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  category: string;
+  readTime: string;
+  coverImage: any;
+  publishedAt: string;
+  author: string;
+  content: any;
+}
 
 export default function BlogPostPage({
   params,
@@ -14,11 +28,74 @@ export default function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
-  const post = blogPosts.find((p) => p.slug === slug);
-  if (!post) notFound();
 
-  const related = blogPosts.filter((p) => p.slug !== slug && p.category === post.category).slice(0, 3);
-  const paragraphs = post.content.trim().split("\n\n").filter(Boolean);
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [related, setRelated] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notFound404, setNotFound404] = useState(false);
+
+  useEffect(() => {
+    client.fetch(blogPostBySlugQuery, { slug })
+      .then((data) => {
+        if (!data) {
+          setNotFound404(true);
+        } else {
+          setPost(data);
+          // fetch related posts
+          client.fetch(blogPostsQuery).then((all: BlogPost[]) => {
+            const rel = all
+              .filter((p) => p.slug !== slug && p.category === data.category)
+              .slice(0, 3);
+            setRelated(rel);
+          });
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setNotFound404(true);
+        setLoading(false);
+      });
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--cream)" }}>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ width: "40px", height: "40px", border: "2px solid rgba(201,169,110,0.2)", borderTop: "2px solid var(--gold)", borderRadius: "50%", margin: "0 auto 1rem", animation: "spin 1s linear infinite" }} />
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            <p style={{ fontFamily: "var(--font-ui)", color: "var(--text-muted)" }}>Loading post...</p>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  if (notFound404 || !post) return notFound();
+
+  const imageUrl = post.coverImage ? urlFor(post.coverImage).width(1400).url() : null;
+
+  // Parse content — handle both plain string and Sanity block content
+  const getContent = () => {
+    if (!post.content) return [];
+    if (typeof post.content === "string") {
+      return post.content.trim().split("\n\n").filter(Boolean);
+    }
+    // Sanity portable text — extract plain text per block
+    if (Array.isArray(post.content)) {
+      return post.content.map((block: any) => {
+        if (block._type === "block" && block.children) {
+          return block.children.map((child: any) => child.text || "").join("");
+        }
+        return "";
+      }).filter(Boolean);
+    }
+    return [];
+  };
+
+  const paragraphs = getContent();
 
   return (
     <>
@@ -28,7 +105,7 @@ export default function BlogPostPage({
       <div
         style={{
           height: "65vh",
-          background: post.gradient,
+          background: "linear-gradient(135deg, #1a2a3a, #2a4a5a)",
           position: "relative",
           overflow: "hidden",
           display: "flex",
@@ -36,13 +113,22 @@ export default function BlogPostPage({
           paddingTop: "var(--nav-h)",
         }}
       >
+        {imageUrl && (
+          <img
+            src={imageUrl}
+            alt={post.title}
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        )}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,12,15,0.3) 0%, rgba(10,12,15,0.75) 100%)" }} />
         <div style={{ position: "relative", zIndex: 2, padding: "4rem", maxWidth: "860px" }}>
           <div style={{ display: "flex", gap: "1rem", alignItems: "center", marginBottom: "1.2rem", flexWrap: "wrap" }}>
             <span style={{ fontFamily: "var(--font-label)", fontSize: "0.55rem", letterSpacing: "0.25em", color: "var(--gold-light)", textTransform: "uppercase", background: "rgba(201,169,110,0.15)", border: "1px solid rgba(201,169,110,0.3)", padding: "0.3rem 0.8rem", borderRadius: "2px" }}>
               {post.category}
             </span>
-            <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.75rem", color: "rgba(255,255,255,0.5)" }}>{post.date}</span>
+            <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.75rem", color: "rgba(255,255,255,0.5)" }}>
+              {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) : ""}
+            </span>
             <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.75rem", color: "rgba(255,255,255,0.5)" }}>·</span>
             <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.75rem", color: "rgba(255,255,255,0.5)" }}>{post.readTime}</span>
           </div>
@@ -82,7 +168,7 @@ export default function BlogPostPage({
               }
               return (
                 <p key={i} style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", lineHeight: 1.9, color: "var(--text-muted)", marginBottom: "1.5rem" }}>
-                  {para.replace(/\*\*/g, "")}
+                  {para}
                 </p>
               );
             })}
@@ -91,7 +177,7 @@ export default function BlogPostPage({
             <div style={{ marginTop: "3rem", paddingTop: "2rem", borderTop: "1px solid #f0ead8", display: "flex", alignItems: "center", gap: "1rem" }}>
               <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "var(--dark)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-display)", fontSize: "1rem", color: "var(--gold)" }}>RC</div>
               <div>
-                <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.88rem", fontWeight: 600, color: "var(--dark)" }}>{post.author}</div>
+                <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.88rem", fontWeight: 600, color: "var(--dark)" }}>{post.author || "Royal Cliff Resort"}</div>
                 <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.72rem", color: "var(--text-muted)" }}>Royal Cliff Resort, Pahalgam</div>
               </div>
             </div>
@@ -120,21 +206,28 @@ export default function BlogPostPage({
                   Related Posts
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  {related.map((r) => (
-                    <Link key={r.id} href={`/blog/${r.slug}`} style={{ textDecoration: "none" }}>
-                      <div
-                        style={{ display: "flex", gap: "0.8rem", alignItems: "flex-start", padding: "0.8rem", background: "#fff", borderRadius: "4px", border: "1px solid #f0ead8", transition: "all 0.3s" }}
-                        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(201,169,110,0.3)"; }}
-                        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "#f0ead8"; }}
-                      >
-                        <div style={{ width: "60px", height: "50px", borderRadius: "3px", background: r.gradient, flexShrink: 0 }} />
-                        <div>
-                          <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.78rem", fontWeight: 600, color: "var(--dark)", lineHeight: 1.3, marginBottom: "0.3rem" }}>{r.title}</div>
-                          <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.65rem", color: "var(--text-muted)" }}>{r.readTime}</div>
+                  {related.map((r) => {
+                    const relImageUrl = r.coverImage ? urlFor(r.coverImage).width(200).url() : null;
+                    return (
+                      <Link key={r._id} href={`/blog/${r.slug}`} style={{ textDecoration: "none" }}>
+                        <div
+                          style={{ display: "flex", gap: "0.8rem", alignItems: "flex-start", padding: "0.8rem", background: "#fff", borderRadius: "4px", border: "1px solid #f0ead8", transition: "all 0.3s" }}
+                          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(201,169,110,0.3)"; }}
+                          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "#f0ead8"; }}
+                        >
+                          <div style={{ width: "60px", height: "50px", borderRadius: "3px", background: "linear-gradient(135deg, #1a2a3a, #2a4a5a)", flexShrink: 0, overflow: "hidden" }}>
+                            {relImageUrl && (
+                              <img src={relImageUrl} alt={r.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                            )}
+                          </div>
+                          <div>
+                            <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.78rem", fontWeight: 600, color: "var(--dark)", lineHeight: 1.3, marginBottom: "0.3rem" }}>{r.title}</div>
+                            <div style={{ fontFamily: "var(--font-ui)", fontSize: "0.65rem", color: "var(--text-muted)" }}>{r.readTime}</div>
+                          </div>
                         </div>
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             )}
