@@ -152,8 +152,8 @@ export default function Testimonials() {
                 <div
                   key={t._id}
                   className="testimonials-card"
-                  style={{
-                    flex: `0 0 calc(${100 / visible}% - ${(1.2 * (visible - 1)) / visible}rem)`,
+  style={{
+    flex: `0 0 calc(${100 / visible}% - ${(1.2 * (visible - 1)) / visible}rem)`,
                     background: "#f9fafb",
                     borderRadius: "12px",
                     padding: "1.4rem",
