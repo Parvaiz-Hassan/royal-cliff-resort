@@ -39,23 +39,7 @@ export default function About() {
               position: "relative",
             }}
           >
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                display: "flex",
-                alignItems: "flex-end",
-                justifyContent: "center",
-                paddingBottom: "0",
-              }}
-            >
-              <svg viewBox="0 0 400 300" style={{ width: "100%", opacity: 0.2 }}>
-                <polygon points="200,20 320,200 80,200" fill="white" />
-                <polygon points="120,60 240,200 0,200" fill="rgba(255,255,255,0.5)" />
-                <polygon points="300,80 400,200 200,200" fill="rgba(255,255,255,0.4)" />
-                <rect x="0" y="200" width="400" height="100" fill="rgba(255,255,255,0.1)" />
-              </svg>
-            </div>
+            
             <div
               style={{
                 position: "absolute",
@@ -91,7 +75,7 @@ export default function About() {
                 fontWeight: 400,
               }}
             >
-              500+
+              1000+
             </div>
             <div
               style={{
@@ -145,11 +129,11 @@ export default function About() {
               marginBottom: "1.5rem",
             }}
           >
-            A Sanctuary Above
+            Where the Himalayas Meet the Lidder
             <br />
             the{" "}
             <em style={{ fontStyle: "italic", color: "var(--gold)" }}>
-              Lidder Valley
+              — Your Private Escape in the Heart of Kashmir
             </em>
           </h2>
 
@@ -171,9 +155,7 @@ export default function About() {
               fontFamily: "var(--font-ui)",
             }}
           >
-            Perched on the cliffs of Pahalgam, Royal Cliff Resort was born
-            from a singular vision — to create a place where the untamed
-            beauty of Kashmir becomes your daily backdrop.
+            Nestled between soaring Himalayan peaks and the crystal-clear waters of the Lidder River, Royall Cliff Resort is Kashmir's best-kept secret. Located just 16 km before Pahalgam on the Bijbehara-Anantnag route, our resort sits in a world untouched by noise and rush — where mornings begin with misty mountain views and evenings end with the gentle sound of a flowing river. Whether you're seeking a peaceful retreat, a romantic getaway, or an adventurer's base camp in the Kashmir Valley, Royall Cliff Resort offers an experience that goes far beyond a stay — it's a memory carved into the mountains.
           </p>
 
           <p
@@ -185,12 +167,9 @@ export default function About() {
               fontFamily: "var(--font-ui)",
             }}
           >
-            From hand-carved walnut furnishings to Kashmiri silk embroideries
-            in every suite, every detail is a tribute to the valley legendary
-            craftsmanship. We do not just offer rooms — we offer a piece of
-            Kashmir soul.
+            Royall Cliff Resort is a premium mountain resort in Pahalgam, Kashmir, perfectly positioned on the scenic Bijbehara-Anantnag highway, 16 km before Pahalgam town. 
+            <a href="https://www.royalcliffresort.com/about">Read More</a>
           </p>
-
           <div
             style={{
               display: "flex",
