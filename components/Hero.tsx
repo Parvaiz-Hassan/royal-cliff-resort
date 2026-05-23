@@ -68,7 +68,8 @@ export default function Hero() {
   const currentSlide = slides[current];
 
   return (
-    <section style={{ position: "relative", minHeight: "100vh", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+    <section style={{ position: "relative", minHeight: "100svh", height: "100svh", display: "flex", flexDirection: "column", overflow: "hidden" }}
+  className="hero-section">
 
       {/* Slides */}
       {slides.map((slide, i) => (
@@ -212,7 +213,7 @@ export default function Hero() {
         textAlign: "center",
         padding: "calc(var(--nav-h) + 1rem) 2rem 2rem",
         color: "#fff",
-        minHeight: "100vh",
+        minHeight: "unset",
       }}>
         <p style={{
           fontFamily: "var(--font-ui)",

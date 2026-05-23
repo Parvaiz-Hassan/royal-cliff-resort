@@ -164,6 +164,11 @@ html, body {
     flex-direction: column !important;
   }
 
+  .hero-section {
+    height: 55vh !important;
+    min-height: 55vh !important;
+  }
+
   .about-grid {
     grid-template-columns: 1fr !important;
     gap: 3rem !important;

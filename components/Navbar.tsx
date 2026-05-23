@@ -30,16 +30,17 @@ export default function Navbar() {
         }}
       >
         <div
-          style={{
-            width: "100%",
-            maxWidth: "1440px",
-            margin: "0 auto",
-            padding: "0 2.5rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
+  className="nav-inner"
+  style={{
+    width: "100%",
+    maxWidth: "1440px",
+    margin: "0 auto",
+    padding: "0 2.5rem",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+  }}
+>
           {/* Logo */}
           <Link href="/" style={{ textDecoration: "none" }}>
             <div
@@ -167,7 +168,7 @@ export default function Navbar() {
                 style={{
                   width: "24px",
                   height: "1.5px",
-                  background: scrolled ? "var(--dark)" : "#fff",
+                  background: "#fff",
                   display: "block",
                 }}
               />
@@ -255,8 +256,9 @@ export default function Navbar() {
       <style>{`
         @media (max-width: 768px) {
           .nav-desktop { display: none !important; }
-          .nav-book { display: none !important; }
-          .nav-hamburger { display: flex !important; }
+  .nav-book { display: none !important; }
+  .nav-hamburger { display: flex !important; }
+  .nav-inner { padding: 0 1rem !important; }
         }
       `}</style>
     </>
