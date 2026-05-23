@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { blogPosts } from "@/lib/blog";
 
 export default function BlogCarousel() {
   const [current, setCurrent] = useState(0);
+  const touchStartX = useRef(0);
   const visible = 3;
   const max = blogPosts.length - visible;
+  const mobileMax = blogPosts.length - 1;
 
   const prev = () => setCurrent((c) => Math.max(0, c - 1));
   const next = () => setCurrent((c) => Math.min(max, c + 1));
@@ -29,21 +31,17 @@ export default function BlogCarousel() {
             <div style={{ width: "60px", height: "1px", background: "linear-gradient(90deg, var(--gold), var(--gold-light))", marginTop: "1.2rem" }} />
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
+            <div style={{ display: "flex", gap: "0.5rem" }} className="blog-arrows">
               <button
                 onClick={prev}
                 disabled={current === 0}
                 style={{ width: "42px", height: "42px", borderRadius: "50%", border: "1px solid rgba(201,169,110,0.3)", background: "transparent", cursor: current === 0 ? "not-allowed" : "pointer", fontSize: "1rem", color: current === 0 ? "rgba(201,169,110,0.3)" : "var(--gold)", transition: "all 0.3s", display: "flex", alignItems: "center", justifyContent: "center" }}
-              >
-                ←
-              </button>
+              >←</button>
               <button
                 onClick={next}
                 disabled={current >= max}
                 style={{ width: "42px", height: "42px", borderRadius: "50%", border: "1px solid rgba(201,169,110,0.3)", background: "transparent", cursor: current >= max ? "not-allowed" : "pointer", fontSize: "1rem", color: current >= max ? "rgba(201,169,110,0.3)" : "var(--gold)", transition: "all 0.3s", display: "flex", alignItems: "center", justifyContent: "center" }}
-              >
-                →
-              </button>
+              >→</button>
             </div>
             <Link href="/blog" className="btn-gold" style={{ fontSize: "0.6rem", padding: "0.6rem 1.4rem" }}>
               View All
@@ -52,8 +50,17 @@ export default function BlogCarousel() {
         </div>
 
         {/* Carousel */}
-        <div style={{ overflow: "hidden" }}>
+        <div
+          style={{ overflow: "hidden" }}
+          onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+          onTouchEnd={(e) => {
+            const diff = touchStartX.current - e.changedTouches[0].clientX;
+            if (diff > 50) setCurrent((c) => Math.min(mobileMax, c + 1));
+            if (diff < -50) setCurrent((c) => Math.max(0, c - 1));
+          }}
+        >
           <div
+            className="blog-track"
             style={{
               display: "flex",
               gap: "2rem",
@@ -64,6 +71,7 @@ export default function BlogCarousel() {
             {blogPosts.map((post) => (
               <div
                 key={post.id}
+                className="blog-card-wrap"
                 style={{ flex: `0 0 calc(${100 / visible}% - ${(2 * (visible - 1)) / visible}rem)` }}
               >
                 <Link href={`/blog/${post.slug}`} style={{ textDecoration: "none" }}>
@@ -122,6 +130,21 @@ export default function BlogCarousel() {
           ))}
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .blog-arrows { display: none !important; }
+
+          .blog-track {
+            gap: 1rem !important;
+            transform: translateX(calc(-${current} * 80%)) !important;
+          }
+
+          .blog-card-wrap {
+            flex: 0 0 78% !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }
