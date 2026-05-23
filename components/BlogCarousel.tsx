@@ -1,15 +1,39 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { blogPosts } from "@/lib/blog";
+import { client, urlFor } from "@/lib/sanity";
+import { blogPostsQuery } from "@/lib/queries";
+
+interface BlogPost {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  category: string;
+  readTime: string;
+  coverImage: any;
+  publishedAt: string;
+}
 
 export default function BlogCarousel() {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
   const [current, setCurrent] = useState(0);
   const touchStartX = useRef(0);
   const visible = 3;
-  const max = blogPosts.length - visible;
-  const mobileMax = blogPosts.length - 1;
+
+  useEffect(() => {
+    client.fetch(blogPostsQuery)
+      .then((data) => {
+        setPosts(data || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const max = Math.max(0, posts.length - visible);
+  const mobileMax = Math.max(0, posts.length - 1);
 
   const prev = () => setCurrent((c) => Math.max(0, c - 1));
   const next = () => setCurrent((c) => Math.min(max, c + 1));
@@ -49,97 +73,118 @@ export default function BlogCarousel() {
           </div>
         </div>
 
-        {/* Carousel */}
-        <div
-          style={{ overflow: "hidden" }}
-          onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
-          onTouchEnd={(e) => {
-            const diff = touchStartX.current - e.changedTouches[0].clientX;
-            if (diff > 50) setCurrent((c) => Math.min(mobileMax, c + 1));
-            if (diff < -50) setCurrent((c) => Math.max(0, c - 1));
-          }}
-        >
-          <div
-            className="blog-track"
-            style={{
-              display: "flex",
-              gap: "2rem",
-              transition: "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)",
-              transform: `translateX(calc(-${current} * (100% / ${visible} + 2rem / ${visible})))`,
-            }}
-          >
-            {blogPosts.map((post) => (
-              <div
-                key={post.id}
-                className="blog-card-wrap"
-                style={{ flex: `0 0 calc(${100 / visible}% - ${(2 * (visible - 1)) / visible}rem)` }}
-              >
-                <Link href={`/blog/${post.slug}`} style={{ textDecoration: "none" }}>
-                  <div
-                    style={{ borderRadius: "6px", overflow: "hidden", border: "1px solid #f0ead8", background: "var(--cream)", height: "100%", transition: "all 0.35s" }}
-                    onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.transform = "translateY(-5px)"; el.style.boxShadow = "0 16px 50px rgba(26,22,18,0.1)"; el.style.borderColor = "rgba(201,169,110,0.3)"; }}
-                    onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.transform = "translateY(0)"; el.style.boxShadow = "none"; el.style.borderColor = "#f0ead8"; }}
-                  >
-                    {/* Image */}
-                    <div style={{ height: "200px", background: post.gradient, position: "relative" }}>
-                      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.5))" }} />
-                      <div style={{ position: "absolute", top: "1rem", left: "1rem" }}>
-                        <span style={{ fontFamily: "var(--font-label)", fontSize: "0.5rem", letterSpacing: "0.2em", color: "var(--gold-light)", textTransform: "uppercase", background: "rgba(0,0,0,0.4)", padding: "0.25rem 0.6rem", borderRadius: "2px" }}>
-                          {post.category}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Body */}
-                    <div style={{ padding: "1.4rem" }}>
-                      <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", fontWeight: 400, color: "var(--dark)", marginBottom: "0.6rem", lineHeight: 1.35 }}>
-                        {post.title}
-                      </h3>
-                      <p style={{ fontFamily: "var(--font-ui)", fontSize: "0.78rem", color: "var(--text-muted)", lineHeight: 1.7, marginBottom: "1rem" }}>
-                        {post.excerpt.substring(0, 90)}...
-                      </p>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid #f0ead8", paddingTop: "0.8rem" }}>
-                        <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.68rem", color: "var(--text-muted)" }}>{post.readTime}</span>
-                        <span style={{ fontFamily: "var(--font-label)", fontSize: "0.55rem", letterSpacing: "0.12em", color: "var(--gold)", textTransform: "uppercase" }}>Read →</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            ))}
+        {/* Loading */}
+        {loading && (
+          <div style={{ textAlign: "center", padding: "4rem 0" }}>
+            <div style={{ width: "36px", height: "36px", border: "2px solid rgba(201,169,110,0.2)", borderTop: "2px solid var(--gold)", borderRadius: "50%", margin: "0 auto", animation: "spin 1s linear infinite" }} />
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
           </div>
-        </div>
+        )}
 
-        {/* Dots */}
-        <div style={{ display: "flex", justifyContent: "center", gap: "6px", marginTop: "2rem" }}>
-          {Array.from({ length: max + 1 }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrent(i)}
-              style={{
-                width: i === current ? "24px" : "8px",
-                height: "8px",
-                borderRadius: i === current ? "4px" : "50%",
-                background: i === current ? "var(--gold)" : "rgba(201,169,110,0.25)",
-                border: "none",
-                cursor: "pointer",
-                transition: "all 0.3s",
-                padding: 0,
+        {/* Carousel */}
+        {!loading && posts.length > 0 && (
+          <>
+            <div
+              style={{ overflow: "hidden" }}
+              onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+              onTouchEnd={(e) => {
+                const diff = touchStartX.current - e.changedTouches[0].clientX;
+                if (diff > 50) setCurrent((c) => Math.min(mobileMax, c + 1));
+                if (diff < -50) setCurrent((c) => Math.max(0, c - 1));
               }}
-            />
-          ))}
-        </div>
+            >
+              <div
+                className="blog-track"
+                style={{
+                  display: "flex",
+                  gap: "2rem",
+                  transition: "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)",
+                  transform: `translateX(calc(-${current} * (100% / ${visible} + 2rem / ${visible})))`,
+                }}
+              >
+                {posts.map((post) => {
+                  const imageUrl = post.coverImage
+                    ? urlFor(post.coverImage).width(800).url()
+                    : null;
+
+                  return (
+                    <div
+                      key={post._id}
+                      className="blog-card-wrap"
+                      style={{ flex: `0 0 calc(${100 / visible}% - ${(2 * (visible - 1)) / visible}rem)` }}
+                    >
+                      <Link href={`/blog/${post.slug}`} style={{ textDecoration: "none" }}>
+                        <div
+                          style={{ borderRadius: "6px", overflow: "hidden", border: "1px solid #f0ead8", background: "var(--cream)", height: "100%", transition: "all 0.35s" }}
+                          onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.transform = "translateY(-5px)"; el.style.boxShadow = "0 16px 50px rgba(26,22,18,0.1)"; el.style.borderColor = "rgba(201,169,110,0.3)"; }}
+                          onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.transform = "translateY(0)"; el.style.boxShadow = "none"; el.style.borderColor = "#f0ead8"; }}
+                        >
+                          {/* Image */}
+                          <div style={{ height: "200px", background: "linear-gradient(135deg, #1a2a3a, #2a4a5a)", position: "relative", overflow: "hidden" }}>
+                            {imageUrl && (
+                              <img
+                                src={imageUrl}
+                                alt={post.title}
+                                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+                              />
+                            )}
+                            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.5))" }} />
+                            <div style={{ position: "absolute", top: "1rem", left: "1rem" }}>
+                              <span style={{ fontFamily: "var(--font-label)", fontSize: "0.5rem", letterSpacing: "0.2em", color: "var(--gold-light)", textTransform: "uppercase", background: "rgba(0,0,0,0.4)", padding: "0.25rem 0.6rem", borderRadius: "2px" }}>
+                                {post.category}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Body */}
+                          <div style={{ padding: "1.4rem" }}>
+                            <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", fontWeight: 400, color: "var(--dark)", marginBottom: "0.6rem", lineHeight: 1.35 }}>
+                              {post.title}
+                            </h3>
+                            <p style={{ fontFamily: "var(--font-ui)", fontSize: "0.78rem", color: "var(--text-muted)", lineHeight: 1.7, marginBottom: "1rem" }}>
+                              {post.excerpt?.substring(0, 90)}...
+                            </p>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid #f0ead8", paddingTop: "0.8rem" }}>
+                              <span style={{ fontFamily: "var(--font-ui)", fontSize: "0.68rem", color: "var(--text-muted)" }}>{post.readTime}</span>
+                              <span style={{ fontFamily: "var(--font-label)", fontSize: "0.55rem", letterSpacing: "0.12em", color: "var(--gold)", textTransform: "uppercase" }}>Read →</span>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Dots */}
+            <div style={{ display: "flex", justifyContent: "center", gap: "6px", marginTop: "2rem" }}>
+              {Array.from({ length: max + 1 }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrent(i)}
+                  style={{ width: i === current ? "24px" : "8px", height: "8px", borderRadius: i === current ? "4px" : "50%", background: i === current ? "var(--gold)" : "rgba(201,169,110,0.25)", border: "none", cursor: "pointer", transition: "all 0.3s", padding: 0 }}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Empty state */}
+        {!loading && posts.length === 0 && (
+          <div style={{ textAlign: "center", padding: "4rem 0", color: "var(--text-muted)", fontFamily: "var(--font-ui)", fontSize: "0.85rem" }}>
+            No blog posts yet. Add some in Sanity Studio.
+          </div>
+        )}
       </div>
 
       <style>{`
         @media (max-width: 768px) {
           .blog-arrows { display: none !important; }
-
           .blog-track {
             gap: 1rem !important;
             transform: translateX(calc(-${current} * 80%)) !important;
           }
-
           .blog-card-wrap {
             flex: 0 0 78% !important;
           }
