@@ -45,23 +45,41 @@ export default function ExperiencesPage() {
       <Navbar />
 
       {/* Hero */}
-      <div style={{ height: "60vh", background: "linear-gradient(135deg, #0a1a2a 0%, #1a2a3a 50%, #0a0c0f 100%)", display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", position: "relative", overflow: "hidden", paddingTop: "var(--nav-h)" }}>
-        <div style={{ position: "absolute", inset: 0, opacity: 0.12 }}>
-          <svg viewBox="0 0 1440 500" preserveAspectRatio="xMidYMid slice" style={{ width: "100%", height: "100%" }}>
-            <polygon points="0,500 200,150 400,280 600,80 800,220 1000,40 1200,180 1440,100 1440,500" fill="#c9a96e" />
-          </svg>
-        </div>
-        <div style={{ position: "relative", zIndex: 2 }}>
-          <p style={{ fontFamily: "var(--font-label)", fontSize: "0.6rem", letterSpacing: "0.4em", color: "var(--gold-light)", marginBottom: "1rem" }}>KASHMIR AWAITS</p>
-          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", fontWeight: 400, color: "#fff", lineHeight: 1.1 }}>
-            Curated <em style={{ fontStyle: "italic", color: "var(--gold-light)" }}>Experiences</em>
-          </h1>
-          <div style={{ width: "60px", height: "1px", background: "linear-gradient(90deg, transparent, var(--gold), transparent)", margin: "1.5rem auto" }} />
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontStyle: "italic", color: "rgba(255,255,255,0.6)", maxWidth: "500px" }}>
-            Beyond your room, the entire valley is your playground
-          </p>
-        </div>
-      </div>
+<div
+  style={{
+    height: "50vh",
+    position: "relative",
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    paddingTop: "var(--nav-h)",
+  }}
+>
+  {/* Background image */}
+  <img
+    src="https://res.cloudinary.com/dhnglltpo/image/upload/v1779533618/royal-cliff-resort-experiences-banner_c1auzs.webp"
+    alt="Contact Royal Cliff Resort"
+    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+  />
+
+  {/* Dark overlay */}
+  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,12,15,0.5) 0%, rgba(10,12,15,0.65) 100%)" }} />
+
+  <div style={{ position: "relative", zIndex: 2 }}>
+    <p style={{ fontFamily: "var(--font-label)", fontSize: "0.6rem", letterSpacing: "0.4em", color: "var(--gold-light)", marginBottom: "1rem" }}>
+      WE ARE HERE FOR YOU
+    </p>
+    <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", fontWeight: 400, color: "#fff", lineHeight: 1.1 }}>
+      Get in <em style={{ fontStyle: "italic", color: "var(--gold-light)" }}>Touch</em>
+    </h1>
+    <div style={{ width: "60px", height: "1px", background: "linear-gradient(90deg, transparent, var(--gold), transparent)", margin: "1.5rem auto" }} />
+    <p style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontStyle: "italic", color: "rgba(255,255,255,0.6)" }}>
+      We respond within 2 hours during business hours
+    </p>
+  </div>
+</div>
 
       {/* Loading */}
       {loading && (

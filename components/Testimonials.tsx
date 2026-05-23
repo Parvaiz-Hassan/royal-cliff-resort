@@ -46,8 +46,16 @@ export default function Testimonials() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [current, setCurrent] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const touchStartX = useRef(0);
   const visible = 4;
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   useEffect(() => {
     client.fetch(testimonialsQuery)
@@ -58,12 +66,6 @@ export default function Testimonials() {
       .catch(() => setLoading(false));
   }, []);
 
-  const max = Math.max(0, testimonials.length - visible);
-
-  const prev = () => setCurrent((c) => Math.max(0, c - 1));
-  const next = () => setCurrent((c) => Math.min(max, c + 1));
-
-  // Static fallback if Sanity empty
   const fallback: Testimonial[] = [
     { _id: "1", name: "Arjun Mehta", location: "Mumbai", date: "2 months ago", rating: 5, room: "Royal Cliff Suite", title: "Exceptional Stay", review: "The Royal Cliff Suite was beyond anything I had imagined. Waking up to that view every morning felt like a dream — the valley below, the peaks above, and the silence of Kashmir all around.", verified: true },
     { _id: "2", name: "Priya Sharma", location: "Delhi", date: "3 months ago", rating: 5, room: "Honeymoon Package", title: "Perfect Honeymoon", review: "The staff arranged our entire trek itinerary, packed us a Kashmiri lunch, and had Kahwa ready when we returned. This is what true hospitality feels like — thoughtful, warm, and absolutely genuine.", verified: true },
@@ -73,7 +75,17 @@ export default function Testimonials() {
   ];
 
   const items = testimonials.length > 0 ? testimonials : fallback;
-  const displayMax = Math.max(0, items.length - visible);
+  const displayMax = isMobile
+    ? Math.max(0, items.length - 1)
+    : Math.max(0, items.length - visible);
+
+  const prev = () => setCurrent((c) => Math.max(0, c - 1));
+  const next = () => setCurrent((c) => Math.min(displayMax, c + 1));
+
+  const getTransform = () => {
+    if (isMobile) return `translateX(calc(-${current} * 83%))`;
+    return `translateX(calc(-${current} * (100% / ${visible} + 1.2rem / ${visible})))`;
+  };
 
   return (
     <section style={{ background: "#fff", padding: "70px 0" }}>
@@ -140,20 +152,20 @@ export default function Testimonials() {
             }}
           >
             <div
-  className="testimonials-track"
-  style={{
-    display: "flex",
-    gap: "1.2rem",
-    transition: "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)",
-    transform: `translateX(calc(-${current} * (100% / ${visible} + 1.2rem / ${visible})))`,
-  }}
->
+              style={{
+                display: "flex",
+                gap: "1.2rem",
+                transition: "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)",
+                transform: getTransform(),
+              }}
+            >
               {items.map((t) => (
                 <div
                   key={t._id}
-                  className="testimonials-card"
-  style={{
-    flex: `0 0 calc(${100 / visible}% - ${(1.2 * (visible - 1)) / visible}rem)`,
+                  style={{
+                    flex: isMobile
+                      ? "0 0 78%"
+                      : `0 0 calc(${100 / visible}% - ${(1.2 * (visible - 1)) / visible}rem)`,
                     background: "#f9fafb",
                     borderRadius: "12px",
                     padding: "1.4rem",
@@ -164,10 +176,9 @@ export default function Testimonials() {
                     minHeight: "220px",
                   }}
                 >
-                  {/* Top row — avatar + name + Google icon */}
+                  {/* Top row */}
                   <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
-                      {/* Avatar */}
                       <div style={{
                         width: "42px", height: "42px", borderRadius: "50%",
                         background: getAvatarColor(t.name),
@@ -196,7 +207,7 @@ export default function Testimonials() {
                     ))}
                   </div>
 
-                  {/* Review text */}
+                  {/* Review */}
                   <p style={{
                     fontFamily: "var(--font-ui)", fontSize: "0.82rem",
                     color: "#4b5563", lineHeight: 1.7,
@@ -235,17 +246,6 @@ export default function Testimonials() {
           ))}
         </div>
       </div>
-
-      <style>{`
-  @media (max-width: 768px) {
-    .testimonials-track {
-      transform: translateX(calc(-${current} * 83%)) !important;
-    }
-    .testimonials-card {
-      flex: 0 0 78% !important;
-    }
-  }
-`}</style>
     </section>
   );
 }

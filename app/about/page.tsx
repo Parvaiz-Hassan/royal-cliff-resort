@@ -10,44 +10,41 @@ export default function AboutPage() {
       <Navbar />
 
       {/* Hero */}
-      <div
-        style={{
-          height: "60vh",
-          backgroundImage:
-          
-      "url('https://res.cloudinary.com/dhnglltpo/image/upload/v1779257808/royal-cliff-resort-about-page-header-banner_ms8gol.webp')",
+<div
+  style={{
+    height: "50vh",
+    position: "relative",
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    paddingTop: "var(--nav-h)",
+  }}
+>
+  {/* Background image */}
+  <img
+    src="https://res.cloudinary.com/dhnglltpo/image/upload/v1779532678/royal-cliff-resort-about-contact-banner_utinxs.webp"
+    alt="Contact Royal Cliff Resort"
+    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+  />
 
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          position: "relative",
-          overflow: "hidden",
-          paddingTop: "var(--nav-h)",
-        }}
-      >
-        <div style={{ position: "absolute", inset: 0, opacity: 0.12 }}>
-          <svg viewBox="0 0 1440 500" preserveAspectRatio="xMidYMid slice" style={{ width: "100%", height: "100%" }}>
-            <polygon points="0,500 200,150 400,280 600,80 800,220 1000,40 1200,180 1440,100 1440,500" fill="#c9a96e" />
-            <polygon points="0,500 150,350 350,400 550,320 750,370 950,300 1150,350 1350,290 1440,320 1440,500" fill="rgba(201,169,110,0.3)" />
-          </svg>
-        </div>
-        <div style={{ position: "relative", zIndex: 2 }}>
-          <p style={{ fontFamily: "var(--font-label)", fontSize: "0.6rem", letterSpacing: "0.4em", color: "var(--gold-light)", marginBottom: "1rem" }}>
-            OUR STORY
-          </p>
-          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", fontWeight: 400, color: "#fff", lineHeight: 1.1 }}>
-            About <em style={{ fontStyle: "italic", color: "var(--gold-light)" }}>Royal Cliff</em>
-          </h1>
-          <div style={{ width: "60px", height: "1px", background: "linear-gradient(90deg, transparent, var(--gold), transparent)", margin: "1.5rem auto" }} />
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontStyle: "italic", color: "rgba(255,255,255,0.6)", maxWidth: "500px" }}>
-            A sanctuary born from the soul of Kashmir
-          </p>
-        </div>
-      </div>
+  {/* Dark overlay */}
+  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,12,15,0.5) 0%, rgba(10,12,15,0.65) 100%)" }} />
+
+  <div style={{ position: "relative", zIndex: 2 }}>
+    <p style={{ fontFamily: "var(--font-label)", fontSize: "0.6rem", letterSpacing: "0.4em", color: "var(--gold-light)", marginBottom: "1rem" }}>
+      WE ARE HERE FOR YOU
+    </p>
+    <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", fontWeight: 400, color: "#fff", lineHeight: 1.1 }}>
+      Get in <em style={{ fontStyle: "italic", color: "var(--gold-light)" }}>Touch</em>
+    </h1>
+    <div style={{ width: "60px", height: "1px", background: "linear-gradient(90deg, transparent, var(--gold), transparent)", margin: "1.5rem auto" }} />
+    <p style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontStyle: "italic", color: "rgba(255,255,255,0.6)" }}>
+      We respond within 2 hours during business hours
+    </p>
+  </div>
+</div>
 
       {/* Story Section */}
       <section style={{ padding: "100px 0", background: "var(--cream)" }}>
@@ -76,8 +73,8 @@ export default function AboutPage() {
           <div>
             <p style={{ fontFamily: "var(--font-label)", fontSize: "0.6rem", letterSpacing: "0.35em", color: "var(--gold)", marginBottom: "1rem" }}>— WHO WE ARE —</p>
             <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 3.5vw, 2.8rem)", fontWeight: 400, color: "var(--dark)", lineHeight: 1.2, marginBottom: "1.5rem" }}>
-              A Vision Born from<br />
-              <em style={{ fontStyle: "italic", color: "var(--gold)" }}>Kashmir's Beauty</em>
+              Where the Himalayas Meet the Lidder<br />
+              <em style={{ fontStyle: "italic", color: "var(--gold)" }}>— Your Private Escape in the Heart of Kashmir</em>
             </h2>
             <div style={{ width: "60px", height: "1px", background: "linear-gradient(90deg, var(--gold), var(--gold-light))", marginBottom: "1.5rem" }} />
             <p style={{ fontFamily: "var(--font-ui)", fontSize: "0.95rem", color: "var(--text-muted)", lineHeight: 1.9, marginBottom: "1.2rem" }}>
@@ -142,11 +139,11 @@ export default function AboutPage() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "center" }} className="about-grid">
             <div>
               {[
-                { label: "Address", value: "Near BP Road, Dalseer, Pahalgam, Jammu & Kashmir — 192125" },
+                { label: "Address", value: "Dalseer, Near BP Road, Pahalgam, Jammu & Kashmir — 192125" },
                 { label: "Phone & WhatsApp", value: "+91 96222 99302" },
                 { label: "Email", value: "contact@royalcliffresort.com" },
                 { label: "Altitude", value: "7,800 feet above sea level" },
-                { label: "Distance", value: "2 km from Betab Valley, 3 km from Town Centre" },
+                { label: "Distance", value: "76 km from Srinagar, 16 km from Pahalgam Town Centre" },
                 { label: "Best Season", value: "April to October (Summer) | December to February (Snow)" },
               ].map((item, i) => (
                 <div key={item.label} style={{ display: "flex", gap: "1.5rem", padding: "1rem 0", borderBottom: i < 5 ? "1px solid #f0ead8" : "none" }}>

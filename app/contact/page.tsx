@@ -39,37 +39,41 @@ export default function ContactPage() {
       <Navbar />
 
       {/* Hero */}
-      <div
-        style={{
-          height: "50vh",
-          background: "linear-gradient(135deg, #0a0c0f 0%, #1a1a2a 50%, #0a0c0f 100%)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          position: "relative",
-          overflow: "hidden",
-          paddingTop: "var(--nav-h)",
-        }}
-      >
-        <div style={{ position: "absolute", inset: 0, opacity: 0.12 }}>
-          <svg viewBox="0 0 1440 400" preserveAspectRatio="xMidYMid slice" style={{ width: "100%", height: "100%" }}>
-            <polygon points="0,400 200,100 400,220 600,50 800,180 1000,30 1200,150 1440,80 1440,400" fill="#c9a96e" />
-          </svg>
-        </div>
-        <div style={{ position: "relative", zIndex: 2 }}>
-          <p style={{ fontFamily: "var(--font-label)", fontSize: "0.6rem", letterSpacing: "0.4em", color: "var(--gold-light)", marginBottom: "1rem" }}>
-            WE ARE HERE FOR YOU
-          </p>
-          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", fontWeight: 400, color: "#fff", lineHeight: 1.1 }}>
-            Get in <em style={{ fontStyle: "italic", color: "var(--gold-light)" }}>Touch</em>
-          </h1>
-          <div style={{ width: "60px", height: "1px", background: "linear-gradient(90deg, transparent, var(--gold), transparent)", margin: "1.5rem auto" }} />
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontStyle: "italic", color: "rgba(255,255,255,0.6)" }}>
-            We respond within 2 hours during business hours
-          </p>
-        </div>
-      </div>
+<div
+  style={{
+    height: "50vh",
+    position: "relative",
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    paddingTop: "var(--nav-h)",
+  }}
+>
+  {/* Background image */}
+  <img
+    src="https://res.cloudinary.com/dhnglltpo/image/upload/v1779532678/royal-cliff-resort-about-contact-banner_utinxs.webp"
+    alt="Contact Royal Cliff Resort"
+    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+  />
+
+  {/* Dark overlay */}
+  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,12,15,0.5) 0%, rgba(10,12,15,0.65) 100%)" }} />
+
+  <div style={{ position: "relative", zIndex: 2 }}>
+    <p style={{ fontFamily: "var(--font-label)", fontSize: "0.6rem", letterSpacing: "0.4em", color: "var(--gold-light)", marginBottom: "1rem" }}>
+      WE ARE HERE FOR YOU
+    </p>
+    <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", fontWeight: 400, color: "#fff", lineHeight: 1.1 }}>
+      Get in <em style={{ fontStyle: "italic", color: "var(--gold-light)" }}>Touch</em>
+    </h1>
+    <div style={{ width: "60px", height: "1px", background: "linear-gradient(90deg, transparent, var(--gold), transparent)", margin: "1.5rem auto" }} />
+    <p style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontStyle: "italic", color: "rgba(255,255,255,0.6)" }}>
+      We respond within 2 hours during business hours
+    </p>
+  </div>
+</div>
 
       {/* Contact Cards */}
       <section style={{ padding: "60px 0", background: "var(--dark)" }}>
@@ -79,7 +83,7 @@ export default function ContactPage() {
               { icon: "📞", label: "Phone & WhatsApp", value: "+91 96222 99302", href: "tel:+919622299302", sub: "Available 9AM - 9PM" },
               { icon: "✉️", label: "Email", value: "contact@royalcliffresort.com", href: "mailto:contact@royalcliffresort.com", sub: "We reply within 2 hours" },
               { icon: "💬", label: "WhatsApp", value: "Chat with us now", href: "https://wa.me/919622299302", sub: "Instant responses" },
-              { icon: "📍", label: "Address", value: "Near BP Road, Pahalgam", href: null, sub: "Jammu & Kashmir — 192125" },
+              { icon: "📍", label: "Address", value: "Dalseer, Near BP Road, Pahalgam", href: null, sub: "Jammu & Kashmir — 192125" },
             ].map((item) => (
               <div
                 key={item.label}

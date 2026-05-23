@@ -79,36 +79,39 @@ export default function RoomsPage() {
       <Navbar />
 
       {/* Page Hero */}
-      <div
-        style={{
-          height: "420px",
-          background: "linear-gradient(135deg, #1a1612 0%, #2c2620 60%, #1a1612 100%)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          position: "relative",
-          overflow: "hidden",
-          paddingTop: "var(--nav-h)",
-        }}
-      >
-        <div style={{ position: "absolute", inset: 0, opacity: 0.12 }}>
-          <svg viewBox="0 0 1440 420" preserveAspectRatio="xMidYMid slice" style={{ width: "100%", height: "100%" }}>
-            <polygon points="0,420 200,100 400,250 600,50 800,200 1000,20 1200,150 1440,80 1440,420" fill="#b8963e" />
-            <polygon points="0,420 150,300 350,350 550,280 750,320 950,260 1150,300 1350,250 1440,270 1440,420" fill="rgba(184,150,62,0.3)" />
-          </svg>
-        </div>
-        <div style={{ position: "relative", zIndex: 2, color: "#fff" }}>
-          <span style={{ fontFamily: "var(--font-label)", fontSize: "0.6rem", letterSpacing: "0.4em", color: "var(--gold-light)" }}>— ACCOMMODATION —</span>
-          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 5vw, 4rem)", fontWeight: 400, marginTop: "0.5rem" }}>
-            Our Rooms &{" "}
-            <em style={{ fontStyle: "italic", color: "var(--gold-light)" }}>Suites</em>
-          </h1>
-          <p style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", color: "rgba(255,255,255,0.65)", marginTop: "0.8rem", fontStyle: "italic" }}>
-            Every room, a different window into Kashmir soul
-          </p>
-        </div>
-      </div>
+<div
+  style={{
+    height: "420px",
+    position: "relative",
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    paddingTop: "var(--nav-h)",
+  }}
+>
+  {/* Background image */}
+  <img
+    src="https://res.cloudinary.com/dhnglltpo/image/upload/v1779533006/royal-cliff-resort-rooms-banner_an7hsu.webp"
+    alt="Rooms & Suites at Royal Cliff Resort"
+    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+  />
+
+  {/* Dark overlay */}
+  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,12,15,0.45) 0%, rgba(10,12,15,0.65) 100%)" }} />
+
+  <div style={{ position: "relative", zIndex: 2, color: "#fff" }}>
+    <span style={{ fontFamily: "var(--font-label)", fontSize: "0.6rem", letterSpacing: "0.4em", color: "var(--gold-light)" }}>— ACCOMMODATION —</span>
+    <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.5rem, 5vw, 4rem)", fontWeight: 400, marginTop: "0.5rem" }}>
+      Our Rooms &{" "}
+      <em style={{ fontStyle: "italic", color: "var(--gold-light)" }}>Suites</em>
+    </h1>
+    <p style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", color: "rgba(255,255,255,0.65)", marginTop: "0.8rem", fontStyle: "italic" }}>
+      Every room, a different window into Kashmir soul
+    </p>
+  </div>
+</div>
 
       {/* Filter Bar */}
       <div style={{ background: "#fff", borderBottom: "1px solid #f0ead8", position: "sticky", top: "var(--nav-h)", zIndex: 50, padding: "1rem 0" }}>
