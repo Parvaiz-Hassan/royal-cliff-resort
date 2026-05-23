@@ -4,31 +4,33 @@ export default function About() {
   return (
     <section
       style={{
-        padding: "100px 0",
+        padding: "70px 0",
         background: "var(--cream)",
       }}
     >
       <div
-          className="about-grid"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "6rem",
-            alignItems: "center",
-          }}
-        >
+        className="about-grid"
+        style={{
+          maxWidth: "1240px",
+          margin: "0 auto",
+          padding: "0 2rem",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "3rem",
+          alignItems: "center",
+        }}
+      >
         {/* Left — Visual */}
-        <div style={{ position: "relative" }}>
-          {/* Main image placeholder */}
+        <div className="about-image" style={{ position: "relative" }}>
           <div
             style={{
               width: "100%",
               aspectRatio: "4/5",
               backgroundImage:
-        "url('https://res.cloudinary.com/dhnglltpo/image/upload/v1779265055/royal-cliff-resort-about-us-poster-2_abheh3.jpg')",
-        backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
+                "url('https://res.cloudinary.com/dhnglltpo/image/upload/v1779265055/royal-cliff-resort-about-us-poster-2_abheh3.jpg')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
               borderRadius: "6px",
               display: "flex",
               alignItems: "center",
@@ -37,7 +39,6 @@ export default function About() {
               position: "relative",
             }}
           >
-            {/* Mountain illustration */}
             <div
               style={{
                 position: "absolute",
@@ -48,29 +49,11 @@ export default function About() {
                 paddingBottom: "0",
               }}
             >
-              <svg
-                viewBox="0 0 400 300"
-                style={{ width: "100%", opacity: 0.2 }}
-              >
-                <polygon
-                  points="200,20 320,200 80,200"
-                  fill="white"
-                />
-                <polygon
-                  points="120,60 240,200 0,200"
-                  fill="rgba(255,255,255,0.5)"
-                />
-                <polygon
-                  points="300,80 400,200 200,200"
-                  fill="rgba(255,255,255,0.4)"
-                />
-                <rect
-                  x="0"
-                  y="200"
-                  width="400"
-                  height="100"
-                  fill="rgba(255,255,255,0.1)"
-                />
+              <svg viewBox="0 0 400 300" style={{ width: "100%", opacity: 0.2 }}>
+                <polygon points="200,20 320,200 80,200" fill="white" />
+                <polygon points="120,60 240,200 0,200" fill="rgba(255,255,255,0.5)" />
+                <polygon points="300,80 400,200 200,200" fill="rgba(255,255,255,0.4)" />
+                <rect x="0" y="200" width="400" height="100" fill="rgba(255,255,255,0.1)" />
               </svg>
             </div>
             <div
@@ -87,7 +70,7 @@ export default function About() {
           </div>
 
           {/* Floating card */}
-           <div
+          <div
             className="floating-card"
             style={{
               position: "absolute",
@@ -136,7 +119,7 @@ export default function About() {
         </div>
 
         {/* Right — Content */}
-        <div style={{ padding: "0 0.5rem" }}>
+        <div className="about-content" style={{ padding: "0 0.5rem" }}>
           <span
             style={{
               display: "inline-block",
@@ -253,7 +236,24 @@ export default function About() {
 
       <style>{`
         @media (max-width: 768px) {
-          .about-grid { grid-template-columns: 1fr !important; }
+          .about-grid {
+            grid-template-columns: 1fr !important;
+            gap: 2rem !important;
+            padding: 0 2rem !important;
+          }
+          section:has(.about-grid) {
+            padding: 50px 0 !important;
+          }
+          .about-image {
+            order: 2;
+          }
+          .about-content {
+            order: 1;
+            padding: 0 !important;
+          }
+          .floating-card {
+            display: none;
+          }
         }
       `}</style>
     </section>
