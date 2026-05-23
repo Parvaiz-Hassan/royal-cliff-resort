@@ -178,8 +178,8 @@ export default function About() {
             }}
           >
             {[
-              { value: "2 km", label: "From Betab Valley" },
-              { value: "3 km", label: "From Town Centre" },
+              { value: "75 km", label: "From Srinagar Airport" },
+              { value: "16 km", label: "From Pahalgam Town Centre" },
             ].map((item) => (
               <div key={item.label}>
                 <div

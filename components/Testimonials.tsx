@@ -140,16 +140,18 @@ export default function Testimonials() {
             }}
           >
             <div
-              style={{
-                display: "flex",
-                gap: "1.2rem",
-                transition: "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)",
-                transform: `translateX(calc(-${current} * (100% / ${visible} + 1.2rem / ${visible})))`,
-              }}
-            >
+  className="testimonials-track"
+  style={{
+    display: "flex",
+    gap: "1.2rem",
+    transition: "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)",
+    transform: `translateX(calc(-${current} * (100% / ${visible} + 1.2rem / ${visible})))`,
+  }}
+>
               {items.map((t) => (
                 <div
                   key={t._id}
+                  className="testimonials-card"
                   style={{
                     flex: `0 0 calc(${100 / visible}% - ${(1.2 * (visible - 1)) / visible}rem)`,
                     background: "#f9fafb",
@@ -235,12 +237,15 @@ export default function Testimonials() {
       </div>
 
       <style>{`
-        @media (max-width: 768px) {
-          .testimonials-track > div {
-            flex: 0 0 85% !important;
-          }
-        }
-      `}</style>
+  @media (max-width: 768px) {
+    .testimonials-track {
+      transform: translateX(calc(-${current} * 83%)) !important;
+    }
+    .testimonials-card {
+      flex: 0 0 78% !important;
+    }
+  }
+`}</style>
     </section>
   );
 }
