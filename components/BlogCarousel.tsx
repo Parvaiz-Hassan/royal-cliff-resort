@@ -13,7 +13,7 @@ export default function BlogCarousel() {
   const next = () => setCurrent((c) => Math.min(max, c + 1));
 
   return (
-    <section style={{ padding: "100px 0", background: "#fff" }}>
+    <section style={{ padding: "60px 0", background: "#fff" }}>
       <div style={{ maxWidth: "1240px", margin: "0 auto", padding: "0 2rem" }}>
 
         {/* Header */}

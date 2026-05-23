@@ -53,7 +53,7 @@ export default function RoomsSection({ onBook }: RoomsSectionProps) {
     setCarouselIndex((prev) => (prev === allRooms.length - 1 ? 0 : prev + 1));
 
   return (
-    <section id="rooms" style={{ background: "#faf7f2", padding: "100px 0" }}>
+    <section id="rooms" style={{ background: "#faf7f2", padding: "50px 0" }}>
       <div style={{ maxWidth: "1240px", margin: "0 auto", padding: "0 2rem" }}>
 
         {/* Header */}

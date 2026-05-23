@@ -16,7 +16,7 @@ export default function Gallery() {
   return (
     <section
       id="gallery"
-      style={{ padding: "100px 0", background: "#fff" }}
+      style={{ padding: "60px 0", background: "#fff" }}
     >
       <div
         style={{ maxWidth: "1440px", margin: "0 auto", padding: "0 2rem" }}

@@ -26,7 +26,7 @@ export default function Experiences() {
   return (
     <section
       id="experiences"
-      style={{ padding: "100px 0", background: "var(--cream)" }}
+      style={{ padding: "60px 0", background: "var(--cream)" }}
     >
       <div
         style={{ maxWidth: "1240px", margin: "0 auto", padding: "0 2rem" }}

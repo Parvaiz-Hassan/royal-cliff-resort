@@ -44,7 +44,7 @@ export default function Testimonials() {
 
   return (
     <section
-      style={{ background: "var(--cream)", padding: "100px 0" }}
+      style={{ background: "var(--cream)", padding: "60px 0" }}
     >
       <div
         style={{ maxWidth: "1240px", margin: "0 auto", padding: "0 2rem" }}

@@ -52,7 +52,7 @@ export default function Features() {
     <section
       style={{
         background: "var(--dark)",
-        padding: "100px 0",
+        padding: "60px 0",
       }}
     >
       <div

@@ -63,7 +63,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      style={{ background: "#fff9f0", padding: "100px 0" }}
+      style={{ background: "#fff9f0", padding: "60px 0" }}
     >
       <div
         style={{ maxWidth: "1240px", margin: "0 auto", padding: "0 2rem" }}
