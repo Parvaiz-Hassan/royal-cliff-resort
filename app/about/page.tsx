@@ -78,10 +78,10 @@ export default function AboutPage() {
             </h2>
             <div style={{ width: "60px", height: "1px", background: "linear-gradient(90deg, var(--gold), var(--gold-light))", marginBottom: "1.5rem" }} />
             <p style={{ fontFamily: "var(--font-ui)", fontSize: "0.95rem", color: "var(--text-muted)", lineHeight: 1.9, marginBottom: "1.2rem" }}>
-              Royal Cliff Resort was born from a singular vision — to create a place where the untamed beauty of Kashmir becomes your daily backdrop. Perched on the cliffs of Pahalgam, overlooking the crystal waters of the Lidder River, we offer more than just a stay.
+              Royall Cliff Resort is a premium mountain resort in Pahalgam, Kashmir, perfectly positioned on the scenic Bijbehara-Anantnag highway, 16 km before Pahalgam town.
             </p>
             <p style={{ fontFamily: "var(--font-ui)", fontSize: "0.95rem", color: "var(--text-muted)", lineHeight: 1.9, marginBottom: "2rem" }}>
-              From hand-carved walnut furnishings to Kashmiri silk embroideries in every suite, every detail is a tribute to the valley's legendary craftsmanship. We don't just offer rooms — we offer a piece of Kashmir's soul.
+              Surrounded by the majestic Himalayas on one side and the legendary Lidder River on the other, our resort offers unmatched natural beauty, fresh mountain air, and complete seclusion from the city crowd. Ideal for adventure lovers, trekkers, nature enthusiasts, and families looking for the best hotels near Pahalgam, we combine comfort with raw Kashmiri wilderness. From stunning valley views to proximity to top Kashmir tourist attractions, Royall Cliff Resort is your gateway to an authentic Himalayan experience.
             </p>
             <Link href="/rooms" className="btn-gold-solid">
               Explore Our Rooms
