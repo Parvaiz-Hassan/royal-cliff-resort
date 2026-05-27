@@ -16,8 +16,8 @@ export async function POST(req: Request) {
 
   try {
     await resend.emails.send({
-      from: "Royal Cliff Resort <bookings@royalcliffresort.com>",
-      to: "contact@royalcliffresort.com",
+      from: "Royal Cliff Resort <onboarding@resend.dev",
+      to: "parwaizhasan271@gmail.com",
       replyTo: email,
       subject: `New Booking Enquiry — ${room || "General"} — ${name}`,
       html: `
