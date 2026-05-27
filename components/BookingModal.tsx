@@ -80,10 +80,32 @@ export default function BookingModal({ room, onClose }: BookingModalProps) {
   const tax = Math.round(subtotal * 0.12);
   const total = subtotal + tax;
 
-  const handlePayLater = () => {
-    setBookingRef("RCR-" + Math.random().toString(36).substr(2, 8).toUpperCase());
-    setStep(4);
-  };
+  const handlePayLater = async () => {
+  const ref = "RCR-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+  setBookingRef(ref);
+
+  // Send email notification
+  try {
+    await fetch("/api/enquiry", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: guestName,
+        email: guestEmail,
+        phone: guestPhone,
+        room: room?.name,
+        checkIn,
+        checkOut,
+        guests,
+        message: `Pay at Hotel booking. Reference: ${ref}`,
+      }),
+    });
+  } catch {
+    // silent fail — booking still confirms
+  }
+
+  setStep(4);
+};
 
   const handleRazorpay = async () => {
     setLoading(true);
@@ -115,10 +137,31 @@ export default function BookingModal({ room, onClose }: BookingModalProps) {
         order_id: data.orderId,
         prefill: { name: guestName, email: guestEmail, contact: guestPhone },
         theme: { color: "#b8963e" },
-        handler: (response: RazorpayResponse) => {
-          setBookingRef(response.razorpay_payment_id);
-          setStep(4);
-        },
+        handler: async (response: RazorpayResponse) => {
+  setBookingRef(response.razorpay_payment_id);
+
+  // Send email notification
+  try {
+    await fetch("/api/enquiry", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: guestName,
+        email: guestEmail,
+        phone: guestPhone,
+        room: room?.name,
+        checkIn,
+        checkOut,
+        guests,
+        message: `Online payment completed. Payment ID: ${response.razorpay_payment_id}`,
+      }),
+    });
+  } catch {
+    // silent fail — booking still confirms
+  }
+
+  setStep(4);
+},
         modal: { ondismiss: () => setLoading(false) },
       };
 

@@ -21,10 +21,26 @@ export default function Contact() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus("sending");
-    setTimeout(() => {
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setStatus("sending");
+
+  try {
+    const res = await fetch("/api/enquiry", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: `${form.firstName} ${form.lastName}`.trim(),
+        email: form.email,
+        phone: form.phone,
+        checkIn: form.checkIn,
+        checkOut: form.checkOut,
+        room: form.roomType,
+        message: form.message,
+      }),
+    });
+
+    if (res.ok) {
       setStatus("sent");
       setForm({
         firstName: "",
@@ -36,8 +52,14 @@ export default function Contact() {
         roomType: "",
         message: "",
       });
-    }, 1500);
-  };
+    } else {
+      throw new Error("Failed");
+    }
+  } catch {
+    alert("Something went wrong. Please try again or WhatsApp us directly.");
+    setStatus("idle");
+  }
+};
 
   const contactDetails = [
     {
