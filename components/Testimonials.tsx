@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { client } from "@/lib/sanity";
-import { testimonialsQuery } from "@/lib/queries";
 
 interface Testimonial {
   _id: string;
@@ -42,9 +40,9 @@ const avatarColors = [
 const getAvatarColor = (name: string) =>
   avatarColors[name.charCodeAt(0) % avatarColors.length];
 
-export default function Testimonials() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function Testimonials({ data = [] }: { data?: Testimonial[] }) {
+  const testimonials = data;
+  const loading = false;
   const [current, setCurrent] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const touchStartX = useRef(0);
@@ -55,15 +53,6 @@ export default function Testimonials() {
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
-  }, []);
-
-  useEffect(() => {
-    client.fetch(testimonialsQuery)
-      .then((data) => {
-        setTestimonials(data || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
   }, []);
 
   const fallback: Testimonial[] = [

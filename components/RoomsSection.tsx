@@ -1,46 +1,33 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import RoomCard from "./RoomCard";
 import { rooms as staticRooms, Room } from "@/lib/rooms";
-import { client, urlFor } from "@/lib/sanity";
-import { roomsQuery } from "@/lib/queries";
+import { urlFor } from "@/lib/sanity";
 
 interface RoomsSectionProps {
   onBook: (room: Room) => void;
+  sanityData?: any[];
 }
 
-export default function RoomsSection({ onBook }: RoomsSectionProps) {
+export default function RoomsSection({ onBook, sanityData = [] }: RoomsSectionProps) {
   const [view, setView] = useState<"grid" | "carousel">("grid");
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const [sanityRooms, setSanityRooms] = useState<Room[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    client
-      .fetch(roomsQuery)
-      .then((data: any[]) => {
-        if (data?.length > 0) {
-          const mapped: Room[] = data.map((r) => ({
-            id: r.slug || r._id,
-            name: r.name,
-            description: r.description || "",
-            price: r.price || 0,
-            size: r.size || "",
-            guests: r.maxGuests || 2,
-            view: r.view || "",
-            tag: r.tag || "",
-            amenities: r.amenities || [],
-            gradient: "linear-gradient(135deg, #1a2a3a, #2a4a5a)",
-            image: r.images?.[0] ? urlFor(r.images[0]).width(800).url() : null,
-          }));
-          setSanityRooms(mapped);
-        }
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+  const sanityRooms: Room[] = sanityData.map((r) => ({
+    id: r.slug || r._id,
+    name: r.name,
+    description: r.description || "",
+    price: r.price || 0,
+    size: r.size || "",
+    guests: r.maxGuests || 2,
+    view: r.view || "",
+    tag: r.tag || "",
+    amenities: r.amenities || [],
+    gradient: "linear-gradient(135deg, #1a2a3a, #2a4a5a)",
+    image: r.images?.[0] ? urlFor(r.images[0]).width(800).url() : null,
+  }));
+  const loading = false;
 
   // Use Sanity rooms if available, fall back to static
   const allRooms = sanityRooms.length > 0 ? sanityRooms : staticRooms;

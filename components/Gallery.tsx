@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { client, urlFor } from "@/lib/sanity";
-import { galleryQuery } from "@/lib/queries";
+import { useState } from "react";
+import { urlFor } from "@/lib/sanity";
 
 interface GalleryItem {
   _id: string;
@@ -12,19 +11,9 @@ interface GalleryItem {
   order: number;
 }
 
-export default function Gallery() {
-  const [items, setItems] = useState<GalleryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function Gallery({ items = [] }: { items?: GalleryItem[] }) {
+  const loading = false;
   const [lightbox, setLightbox] = useState<GalleryItem | null>(null);
-
-  useEffect(() => {
-    client.fetch(galleryQuery)
-      .then((data) => {
-        setItems(data || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
 
   const gridStyles: React.CSSProperties[] = [
     { gridColumn: "1 / 6", gridRow: "1 / 3" },

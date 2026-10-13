@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
-import { client, urlFor } from "@/lib/sanity";
-import { blogPostsQuery } from "@/lib/queries";
+import { urlFor } from "@/lib/sanity";
 
 interface BlogPost {
   _id: string;
@@ -16,21 +15,12 @@ interface BlogPost {
   publishedAt: string;
 }
 
-export default function BlogCarousel() {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function BlogCarousel({ items = [] }: { items?: BlogPost[] }) {
+  const posts = items;
+  const loading = false;
   const [current, setCurrent] = useState(0);
   const touchStartX = useRef(0);
   const visible = 3;
-
-  useEffect(() => {
-    client.fetch(blogPostsQuery)
-      .then((data) => {
-        setPosts(data || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
 
   const max = Math.max(0, posts.length - visible);
   const mobileMax = Math.max(0, posts.length - 1);

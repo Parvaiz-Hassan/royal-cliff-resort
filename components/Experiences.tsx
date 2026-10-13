@@ -1,8 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { client, urlFor } from "@/lib/sanity";
-import { experiencesQuery } from "@/lib/queries";
+import { urlFor } from "@/lib/sanity";
 
 interface Experience {
   _id: string;
@@ -17,18 +15,9 @@ interface Experience {
   order: number;
 }
 
-export default function Experiences() {
-  const [experiences, setExperiences] = useState<Experience[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    client.fetch(experiencesQuery)
-      .then((data) => {
-        setExperiences(data || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+export default function Experiences({ items = [] }: { items?: Experience[] }) {
+  const experiences = items;
+  const loading = false;
 
   const displayItems = experiences.slice(0, 3);
 

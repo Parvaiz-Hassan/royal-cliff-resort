@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const nextConfig: NextConfig = {
   images: {
+    loader: "custom",
+    loaderFile: "./lib/sanity-image-loader.ts",
     remotePatterns: [
       {
         protocol: "https",
@@ -14,3 +17,5 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+initOpenNextCloudflareForDev();
