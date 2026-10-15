@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 
 export default function ContactPage() {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -25,13 +25,33 @@ export default function ContactPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("sending");
-    setTimeout(() => {
+
+    try {
+      const res = await fetch("/api/enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: `${form.firstName} ${form.lastName}`.trim(),
+          email: form.email,
+          phone: form.phone,
+          checkIn: form.checkIn,
+          checkOut: form.checkOut,
+          room: form.roomType,
+          message: form.subject ? `[${form.subject}] ${form.message}` : form.message,
+        }),
+      });
+
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+
       setStatus("sent");
       setForm({ firstName: "", lastName: "", email: "", phone: "", checkIn: "", checkOut: "", roomType: "", subject: "", message: "" });
-    }, 1500);
+    } catch (err) {
+      console.error("Contact form error:", err);
+      setStatus("error");
+    }
   };
 
   return (
@@ -196,6 +216,11 @@ export default function ContactPage() {
                 <button type="submit" disabled={status === "sending"} className="btn-gold-solid" style={{ width: "100%", justifyContent: "center", opacity: status === "sending" ? 0.7 : 1, cursor: status === "sending" ? "not-allowed" : "pointer" }}>
                   {status === "sending" ? "Sending..." : "Send Message →"}
                 </button>
+                {status === "error" && (
+                  <p style={{ fontFamily: "var(--font-ui)", fontSize: "0.8rem", color: "#c0392b", marginTop: "1rem", textAlign: "center" }}>
+                    Sorry, your message could not be sent. Please try again or WhatsApp us at +91 96222 99302.
+                  </p>
+                )}
               </form>
             )}
           </div>

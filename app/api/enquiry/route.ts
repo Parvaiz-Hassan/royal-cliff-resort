@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 // Where enquiry / booking notifications go. Comma-separate for several inboxes.
 // Set ENQUIRY_TO_EMAIL in Cloudflare (Worker → Settings → Variables) to change it.
-const DEFAULT_TO = "parwaizhasan271@gmail.com, parvaizhassan007@gmail.com";
+const DEFAULT_TO = "theroyalcliffresort@gmail.com, parwaizhasan271@gmail.com";
 
 // Sender address. Must be on a domain verified in Resend (royalcliffresort.com).
 const DEFAULT_FROM = "Royal Cliff Resort <bookings@royalcliffresort.com>";
